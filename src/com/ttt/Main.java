@@ -1,13 +1,13 @@
 package com.ttt;
 
-import java.io.Console;
 import java.util.Scanner;
 
 public class Main {
 
-    private static Field field = new Field();
-    private static Scanner scan = new Scanner(System.in);
+    private static final Field field = new Field();
+    private static final Scanner scan = new Scanner(System.in);
     private static boolean bot = false;
+    private static Character player = 'X';
 
     public static void main(String[] args) {
 
@@ -49,39 +49,45 @@ public class Main {
 
         field.printField();
         System.out.println("Player X's turn");
+        field.clearField();
 
-//        for (;;)
-//        {
-//             try
-//            {
-//                //Если бот включен и его ход
-//                if (bot && player == 'O')
-//                    botTurn(player);
-//
-//                else
-//                    turn(player);
-//
-//                if (check_end() != 'c')
-//                    break;
-//
-//                if ((bot) || (bot && player == 'X'))
-//                    cout << "Player " << player << "'s turn" << endl;
-//            }
-//            catch(int err)
-//            {
-//                //Не выводит ошибки при ходе бота
-//                if (err == 1 && ( (!bot) ||
-//                        (bot && player == 'X') ) )
-//                {
-//                    cout << "The cell is already occupied" << endl;
-//                }
-//                if (err == 2 && ( (!bot) ||
-//                        (bot && player == 'X') ) )
-//                {
-//                    cout << "Enter a valid cell number" << endl;
-//                }
-//            }
-//        }
+        for(;;)
+        {
+            playerTurn();
+        }
+
     }
 
+    private static void playerTurn() {
+
+        int userCell = 0;
+        if (scan.hasNextInt()) {
+            userCell = scan.nextInt();
+        } else {
+            // throw ; !!!!!!!!!!!!!!!!!!!!!!!!!
+        }
+
+        int checkCell = 0;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++){
+                checkCell++;
+                if (checkCell == userCell)
+                {
+                    if (field.cell[i][j] == ' ') {
+                        field.cell[i][j] = player;
+                    }
+                    else
+                    {
+                        System.out.println("The cell is already occupied"); // trow; !!!!
+                    }
+                    break;
+                }
+            }
+            if (checkCell == userCell)
+            {
+                break;
+            }
+        }
+        field.printField();
+    }
 }
