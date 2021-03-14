@@ -1,5 +1,6 @@
 package com.ttt;
 
+import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
@@ -19,8 +20,6 @@ public class Main {
     }
 
     private static void gameBody() {
-        Character player = 'X';
-
 
         // cls
 
@@ -53,18 +52,24 @@ public class Main {
 
         for(;;)
         {
-            playerTurn();
+            turn();
+            field.printField();
+            if (player == 'X')
+                player = 'O';
+            else
+                player = 'X';
         }
 
     }
 
-    private static void playerTurn() {
-
+    private static void turn(){
         int userCell = 0;
-        if (scan.hasNextInt()) {
-            userCell = scan.nextInt();
-        } else {
-            // throw ; !!!!!!!!!!!!!!!!!!!!!!!!!
+
+        if (bot && player == 'O'){
+            userCell = botTurn();
+        }
+        else {
+            userCell = playerTurn();
         }
 
         int checkCell = 0;
@@ -88,6 +93,47 @@ public class Main {
                 break;
             }
         }
-        field.printField();
+    }
+
+    private static int botTurn() {
+
+        /* Алгоритм бота основан на рандоме, ставит нули в случайные свободные
+         * клетки, но если видит строку с двумя одинаковыми символами и
+         * пробелом (т.е до победы какой-то из сторон остался один ход),
+         * он ставит туда ноль, чтобы или выиграть самому или не дать выиграть
+         * противнику, нули (т.е своя победа) в приоритете.
+         */
+
+        int botCell = 0;
+
+   //     botCell = scanLines('O');
+        if (botCell != 0) {
+            //fill cell number botCell
+        } else {
+ //           botCell = scanLines('X');
+        }
+
+        if (botCell != 0) {
+            //fill cell number botCell
+        }
+        else {
+            Random rand = new Random();
+            botCell = rand.nextInt(9) + 1;
+            return botCell;
+        }
+        return 0;
+    }
+
+    private static int playerTurn() {
+
+        int playerCell = 0;
+        if (scan.hasNextInt()) {
+            playerCell = scan.nextInt();
+            return  playerCell;
+        } else {
+            // throw ; !!!!!!!!!!!!!!!!!!!!!!!!!
+        }
+        return 0;
+
     }
 }
