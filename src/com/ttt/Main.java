@@ -63,34 +63,47 @@ public class Main {
     }
 
     private static void turn(){
-        int userCell = 0;
 
-        if (bot && player == 'O'){
-            userCell = botTurn();
-        }
-        else {
-            userCell = playerTurn();
-        }
-
-        int checkCell = 0;
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++){
-                checkCell++;
-                if (checkCell == userCell)
-                {
-                    if (field.cell[i][j] == ' ') {
-                        field.cell[i][j] = player;
-                    }
-                    else
+        int userCell;
+        for(;;)
+        {
+            if (bot && player == 'O'){
+                userCell = botTurn();
+            }
+            else {
+                userCell = playerTurn();
+            }
+            try{
+                    if (userCell == 0 || userCell > 9)
                     {
-                        System.out.println("The cell is already occupied"); // trow; !!!!
+                        throw new Exception("Enter a valid cell number");
                     }
-                    break;
+                int checkCell = 0;
+                for (int i = 0; i < 3; i++)
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+                        checkCell++;
+                        if (checkCell == userCell)
+                        {
+                            if (field.cell[i][j] == ' ')
+                            {
+                                field.cell[i][j] = player;
+                                scan.next();
+                                return;
+                            } else {
+                                throw new Exception("The cell is already occupied");
+                            }
+                        }
+                    }
                 }
             }
-            if (checkCell == userCell)
-            {
-                break;
+            catch (Exception err) {
+                if ((bot && player == 'X') || !bot)
+                {
+                    System.out.println(err.getMessage());
+                    scan.next(); // to ignore the rest of the symbols in the line with a mistake
+                }
             }
         }
     }
@@ -124,16 +137,13 @@ public class Main {
         return 0;
     }
 
-    private static int playerTurn() {
-
-        int playerCell = 0;
+    private static int playerTurn(){
+        int playerCell;
         if (scan.hasNextInt()) {
             playerCell = scan.nextInt();
             return  playerCell;
         } else {
-            // throw ; !!!!!!!!!!!!!!!!!!!!!!!!!
+            return 0;
         }
-        return 0;
-
     }
 }
