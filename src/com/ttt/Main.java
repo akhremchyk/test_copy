@@ -32,11 +32,12 @@ public class Main {
         for (; ; )
         {
             try {
-                int sw = 0;
+                int sw = 0; //switch
                 if (scan.hasNextInt()) {
-                    sw = scan.nextInt(); //switch
+                    sw = scan.nextInt();
                 } else {
-                    scan.nextLine();
+                    scan.nextLine(); //to clear the input stream, ignore the rest of the symbols
+                                     //in the line with a mistake and show only one error message
                     throw new Exception("Enter a valid number");
                 }
 
@@ -56,7 +57,7 @@ public class Main {
             {
                     System.out.println(err.getMessage());
 //                    if (scan.hasNext())
-//                    scan.next(); // to ignore the rest of the symbols in the line with a mistake
+//                    scan.next();
             }
         }
 
@@ -97,10 +98,11 @@ public class Main {
             }
             catch (Exception err) {
                 if ((bot && player == 'X') || !bot)
+                //in order not to show errors during the bot's turn
                 {
                     System.out.println(err.getMessage());
 //                    if (scan.hasNext())
-//                    scan.next(); // to ignore the rest of the symbols in the line with a mistake
+//                    scan.next();
                 }
             }
         }

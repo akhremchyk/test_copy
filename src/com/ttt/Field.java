@@ -1,13 +1,26 @@
 package com.ttt;
 
-import java.util.Arrays;
+import java.util.HashMap;
 
 public class Field {
 
     private char[][] cell = new char[3][3];
+    private HashMap<Integer, Integer[]> cellNumbers = new HashMap<Integer, Integer[]>();
 
     public Field() {
         this.initialFill();
+        int number = 1;
+        Integer[] coordinates = new Integer[2];
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                coordinates[0] = i;
+                coordinates[1] = j;
+                cellNumbers.put(number, coordinates);
+                number++;
+            }
+        }
     }
 
 
@@ -21,8 +34,7 @@ public class Field {
                                 "\t " + cell[2][0] + " | " + cell[2][1] + " | " + cell[2][2] + " \n");
     }
 
-    public void initialFill() {
-
+    public void initialFill() { // initial indication of cells' numbers
         char cell_num = '1';
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 3; j++) {
@@ -45,6 +57,9 @@ public class Field {
     {
         int checkCell = 0;
         for (int i = 0; i < 3; i++)
+            //goes through every cell increasing counter(checkCell) until
+            //counter == cell number chosen by user
+            //fills the cell on which the cycle stopped
         {
             for (int j = 0; j < 3; j++)
             {
