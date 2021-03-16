@@ -8,7 +8,9 @@ public class Field {
     private HashMap<Integer, Integer[]> cellNumbers = new HashMap<Integer, Integer[]>();
 
     public Field() {
-        this.initialFill();
+        initialFill();
+
+//        Initializing cellNumber HashMap
         Integer number = 1;
         for (int i = 0; i < 3; i++)
         {
@@ -32,7 +34,8 @@ public class Field {
                                 "\t " + cell[2][0] + " | " + cell[2][1] + " | " + cell[2][2] + " \n");
     }
 
-    public void initialFill() { // initial indication of cells' numbers
+    public void initialFill() {
+//         initial indication of cells' numbers
         char cell_num = '1';
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 3; j++) {
@@ -62,4 +65,12 @@ public class Field {
                         throw new Exception("The cell is already occupied");
                     }
     }
+
+    public char[] getLine(int lineNum)
+    {
+        return cell[lineNum];
+    }
+
 }
+
+

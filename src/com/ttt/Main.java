@@ -21,7 +21,7 @@ public class Main {
 
     private static void gameBody() {
 
-        // cls
+//        TODO cls
 
         field.printField();
 
@@ -32,12 +32,13 @@ public class Main {
         for (; ; )
         {
             try {
-                int sw = 0; //switch
+                int sw; // switch
                 if (scan.hasNextInt()) {
                     sw = scan.nextInt();
                 } else {
-                    scan.nextLine(); //to clear the input stream, ignore the rest of the symbols
-                                     //in the line with a mistake and show only one error message
+                    scan.nextLine();
+//                    to clear the input stream, ignore the rest of the symbols
+//                     in the line with a mistake and show only one error message
                     throw new Exception("Enter a valid number");
                 }
 
@@ -56,8 +57,8 @@ public class Main {
             catch (Exception err)
             {
                     System.out.println(err.getMessage());
-//                    if (scan.hasNext())
-//                    scan.next();
+//                     FIXME if (scan.hasNext())
+//                      scan.next();
             }
         }
 
@@ -98,13 +99,24 @@ public class Main {
             }
             catch (Exception err) {
                 if ((bot && player == 'X') || !bot)
-                //in order not to show errors during the bot's turn
+//                in order not to show errors during the bot's turn
                 {
                     System.out.println(err.getMessage());
-//                    if (scan.hasNext())
+//                   FIXME if (scan.hasNext())
 //                    scan.next();
                 }
             }
+        }
+    }
+
+    private static int playerTurn(){
+        int playerCell;
+        if (scan.hasNextInt()) {
+            playerCell = scan.nextInt();
+            return  playerCell;
+        } else {
+            scan.nextLine();
+            return 0;
         }
     }
 
@@ -119,15 +131,15 @@ public class Main {
 
         int botCell = 0;
 
-   //     botCell = scanLines('O');
+//             TODO botCell = scanLines('O');
         if (botCell != 0) {
-            //fill cell number botCell
+//             TODO fill cell number botCell
         } else {
- //           botCell = scanLines('X');
+//             TODO botCell = scanLines('X');
         }
 
         if (botCell != 0) {
-            //fill cell number botCell
+//             TODO fill cell number botCell
         }
         else {
             Random rand = new Random();
@@ -137,14 +149,12 @@ public class Main {
         return 0;
     }
 
-    private static int playerTurn(){
-        int playerCell;
-        if (scan.hasNextInt()) {
-            playerCell = scan.nextInt();
-            return  playerCell;
-        } else {
-            scan.nextLine();
-            return 0;
-        }
+    private static void scan_lines(char sought_sym)
+    {
+        char[] checked_line = new char[3];
+
+       checked_line = field.getLine(0);
+
     }
+
 }
