@@ -9,14 +9,12 @@ public class Field {
 
     public Field() {
         this.initialFill();
-        int number = 1;
-        Integer[] coordinates = new Integer[2];
+        Integer number = 1;
         for (int i = 0; i < 3; i++)
         {
             for (int j = 0; j < 3; j++)
             {
-                coordinates[0] = i;
-                coordinates[1] = j;
+                Integer[] coordinates = {i, j};
                 cellNumbers.put(number, coordinates);
                 number++;
             }
@@ -55,26 +53,13 @@ public class Field {
 
     public void fillCell(int userCell, char player) throws Exception
     {
-        int checkCell = 0;
-        for (int i = 0; i < 3; i++)
-            //goes through every cell increasing counter(checkCell) until
-            //counter == cell number chosen by user
-            //fills the cell on which the cycle stopped
-        {
-            for (int j = 0; j < 3; j++)
-            {
-                checkCell++;
-                if (checkCell == userCell)
-                {
-                    if (cell[i][j] == ' ')
+                    Integer[] cellCoord = cellNumbers.get(userCell);
+                    if (cell[cellCoord[0]][cellCoord[1]] == ' ')
                     {
-                        cell[i][j] = player;
+                        cell[cellCoord[0]][cellCoord[1]] = player;
                         return;
                     } else {
                         throw new Exception("The cell is already occupied");
                     }
-                }
-            }
-        }
     }
 }
