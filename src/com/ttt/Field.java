@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class Field {
 
-    char[][] cell = new char[3][3];
+    private char[][] cell = new char[3][3];
 
     public Field() {
         this.initialFill();
@@ -37,6 +37,28 @@ public class Field {
         for (int i = 0; i < 3; i++){
             for (int j = 0; j < 3; j++){
                 cell[i][j] = ' ';
+            }
+        }
+    }
+
+    public void fillCell(int userCell, char player) throws Exception
+    {
+        int checkCell = 0;
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                checkCell++;
+                if (checkCell == userCell)
+                {
+                    if (cell[i][j] == ' ')
+                    {
+                        cell[i][j] = player;
+                        return;
+                    } else {
+                        throw new Exception("The cell is already occupied");
+                    }
+                }
             }
         }
     }

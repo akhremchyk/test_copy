@@ -29,20 +29,34 @@ public class Main {
         System.out.println("2. Player vs Player");
 
 
-        for (; ; ) {
-            int sw = 0;
-            if (scan.hasNextInt()) {
-                sw = scan.nextInt(); //switch
-            } else {
-                // throw 1; !!!!!!!!!!!!!!!!!!!!!!!!!
-            }
+        for (; ; )
+        {
+            try {
+                int sw = 0;
+                if (scan.hasNextInt()) {
+                    sw = scan.nextInt(); //switch
+                } else {
+                    scan.nextLine();
+                    throw new Exception("Enter a valid number");
+                }
 
-            if (sw == 1) {
-                bot = true;
-                break;
-            } else if (sw == 2) {
-                bot = false;
-                break;
+                if (sw == 1) {
+                    bot = true;
+                    break;
+                } else if (sw == 2) {
+                    bot = false;
+                    break;
+                }
+                else
+                {
+                    throw new Exception("Enter a valid number");
+                }
+            }
+            catch (Exception err)
+            {
+                    System.out.println(err.getMessage());
+//                    if (scan.hasNext())
+//                    scan.next(); // to ignore the rest of the symbols in the line with a mistake
             }
         }
 
@@ -74,35 +88,19 @@ public class Main {
                 userCell = playerTurn();
             }
             try{
-                    if (userCell == 0 || userCell > 9)
-                    {
-                        throw new Exception("Enter a valid cell number");
-                    }
-                int checkCell = 0;
-                for (int i = 0; i < 3; i++)
+                if (userCell == 0 || userCell > 9)
                 {
-                    for (int j = 0; j < 3; j++)
-                    {
-                        checkCell++;
-                        if (checkCell == userCell)
-                        {
-                            if (field.cell[i][j] == ' ')
-                            {
-                                field.cell[i][j] = player;
-                                scan.next();
-                                return;
-                            } else {
-                                throw new Exception("The cell is already occupied");
-                            }
-                        }
-                    }
+                    throw new Exception("Enter a valid cell number");
                 }
+                field.fillCell(userCell, player);
+                return;
             }
             catch (Exception err) {
                 if ((bot && player == 'X') || !bot)
                 {
                     System.out.println(err.getMessage());
-                    scan.next(); // to ignore the rest of the symbols in the line with a mistake
+//                    if (scan.hasNext())
+//                    scan.next(); // to ignore the rest of the symbols in the line with a mistake
                 }
             }
         }
@@ -143,6 +141,7 @@ public class Main {
             playerCell = scan.nextInt();
             return  playerCell;
         } else {
+            scan.nextLine();
             return 0;
         }
     }
