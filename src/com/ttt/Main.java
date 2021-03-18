@@ -1,5 +1,6 @@
 package com.ttt;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -8,7 +9,11 @@ public class Main {
     private static final Field field = new Field();
     private static final Scanner scan = new Scanner(System.in);
     private static boolean bot = false;
-    private static Character player = 'X';
+    private static final Character playerSymbol1 = 'X';
+    private static final Character playerSymbol2 = 'O';
+    private static Character botSymbol = playerSymbol2;
+    private static Character player = playerSymbol1;
+
 
     public static void main(String[] args) {
 
@@ -21,7 +26,7 @@ public class Main {
 
     private static void gameBody() {
 
-        // cls
+//        TODO cls
 
         field.printField();
 
@@ -32,12 +37,13 @@ public class Main {
         for (; ; )
         {
             try {
-                int sw = 0; //switch
+                int sw; // switch
                 if (scan.hasNextInt()) {
                     sw = scan.nextInt();
                 } else {
-                    scan.nextLine(); //to clear the input stream, ignore the rest of the symbols
-                                     //in the line with a mistake and show only one error message
+                    scan.nextLine();
+//                    to clear the input stream, ignore the rest of the symbols
+//                     in the line with a mistake and show only one error message
                     throw new Exception("Enter a valid number");
                 }
 
@@ -56,85 +62,46 @@ public class Main {
             catch (Exception err)
             {
                     System.out.println(err.getMessage());
-//                    if (scan.hasNext())
-//                    scan.next();
+//                     FIXME if (scan.hasNext())
+//                      scan.next();
             }
         }
 
         field.printField();
-        System.out.println("Player X's turn");
+        System.out.println("Player " + player + "'s turn");
         field.clearField();
 
         for(;;)
         {
             turn();
             field.printField();
-            if (player == 'X')
-                player = 'O';
-            else
-                player = 'X';
+            changePlayer();
         }
 
     }
 
-    private static void turn(){
+    private static void turn() {
 
-        int userCell;
         for(;;)
         {
-            if (bot && player == 'O'){
-                userCell = botTurn();
-            }
-            else {
-                userCell = playerTurn();
-            }
             try{
-                if (userCell == 0 || userCell > 9)
-                {
-                    throw new Exception("Enter a valid cell number");
+                if (bot && player == botSymbol){
+                    field.fillCell(botTurn());
                 }
-                field.fillCell(userCell, player);
-                return;
+                else {
+                    field.fillCell(playerTurn());
+                }
             }
             catch (Exception err) {
-                if ((bot && player == 'X') || !bot)
-                //in order not to show errors during the bot's turn
+                if ((bot && player != botSymbol) || !bot) //FIXME
+//                in order not to show errors during the bot's turn
                 {
                     System.out.println(err.getMessage());
-//                    if (scan.hasNext())
+//                   FIXME if (scan.hasNext())
 //                    scan.next();
                 }
             }
         }
-    }
-
-    private static int botTurn() {
-
-        /* Алгоритм бота основан на рандоме, ставит нули в случайные свободные
-         * клетки, но если видит строку с двумя одинаковыми символами и
-         * пробелом (т.е до победы какой-то из сторон остался один ход),
-         * он ставит туда ноль, чтобы или выиграть самому или не дать выиграть
-         * противнику, нули (т.е своя победа) в приоритете.
-         */
-
-        int botCell = 0;
-
-   //     botCell = scanLines('O');
-        if (botCell != 0) {
-            //fill cell number botCell
-        } else {
- //           botCell = scanLines('X');
-        }
-
-        if (botCell != 0) {
-            //fill cell number botCell
-        }
-        else {
-            Random rand = new Random();
-            botCell = rand.nextInt(9) + 1;
-            return botCell;
-        }
-        return 0;
     }
 
     private static int playerTurn(){
@@ -147,4 +114,146 @@ public class Main {
             return 0;
         }
     }
+
+    private static Integer[] botTurn() throws Exception {
+
+        // Bot scans for lines with two identical symbols and a clear cell and fills it.
+        // Bot's symbol is in priority in order to win instantly.
+        // If there are none such cells, it just fills a random cell.
+
+        Integer[] botCell;
+
+        botCell = scanForTwoAndClear(getCurrentPlayer());
+        if (botCell != null) {
+            return botCell;
+        } else {
+            botCell = scanForTwoAndClear(getOtherPlayer());
+        }
+
+        if (botCell != null) {
+            return  botCell;
+        }
+        else {
+            Random rand = new Random();
+            return field.cellNumToCoord(rand.nextInt(9) + 1);
+        }
+    }
+
+    private static Integer[] scanForTwoAndClear(char soughtSymbol)
+    {
+//      scans for a row with 2 identical symbols and a clear cell
+        ArrayList<Character> checkedLine;
+
+        for (int i = 0; i < 3; i++)
+        {
+            checkedLine = field.getRow(i);
+            if (!checkedLine.contains(getOtherSymbol(soughtSymbol))
+                    && checkedLine.contains(soughtSymbol))
+            {
+                int symbolCtr = 0; //counter to count how much sought symbols are there
+                int clearCellCoord = 0; //coordinate of the clear cell
+                for (int j = 0; j < 3; j++)
+                {
+                    if (checkedLine.get(j) == soughtSymbol)
+                    {
+                        symbolCtr++;
+                    }
+                    else {
+                        clearCellCoord = j;
+                    }
+                }
+                if (symbolCtr == 2)
+                {
+                    // if there are 2 sought symbols, there is only 1 free cell
+                    return new Integer[]{i, clearCellCoord};
+                }
+            }
+        }
+
+        //scans for a column with 2 identical symbols and a clear cell
+        for (int i = 0; i < 3; i++)
+        {
+            checkedLine = field.getColumn(i);
+            if (!checkedLine.contains(getOtherSymbol(soughtSymbol))
+                    && checkedLine.contains(soughtSymbol))
+            {
+                int symbolCtr = 0; //counter to count how much sought symbols are there
+                int clearCellCoord = 0; //coordinate of the clear cell
+                for (int j = 0; j < 3; j++)
+                {
+                    if (checkedLine.get(j) == soughtSymbol)
+                    {
+                        symbolCtr++;
+                    }
+                    else {
+                        clearCellCoord = j;
+                    }
+                }
+                if (symbolCtr == 2)
+                {
+                    // if there are 2 sought symbols, there is only 1 free cell
+                    return new Integer[]{clearCellCoord, i};
+                }
+            }
+        }
+
+        //scans for a diagonal with 2 identical symbols and a clear cell
+        for (int i = 0; i < 2; i++)
+        {
+            checkedLine = field.getDiagonal(i);
+            if (!checkedLine.contains(getOtherSymbol(soughtSymbol))
+                    && checkedLine.contains(soughtSymbol))
+            {
+                int symbolCtr = 0; //counter to count how much sought symbols are there
+                int clearCellCoord = 0; //coordinate of the clear cell
+                for (int j = 0; j < 3; j++)
+                {
+                    if (checkedLine.get(j) == soughtSymbol)
+                    {
+                        symbolCtr++;
+                    }
+                    else {
+                        clearCellCoord = j;
+                    }
+                }
+                if (symbolCtr == 2) {
+                    // if there are 2 sought symbols, there is only 1 free cell
+                    if (i == 0)
+                        return new Integer[]{clearCellCoord, clearCellCoord};
+                    else if (i == 1)
+                        return new Integer[]{0 + clearCellCoord,2 - clearCellCoord};
+                }
+            }
+        }
+
+        return null;
+    }
+
+
+
+    public static char getCurrentPlayer ()
+    {
+        return player;
+    }
+
+    public static char getOtherPlayer ()
+    {
+        if (player == playerSymbol1)
+           return playerSymbol2;
+        else
+            return playerSymbol1;
+    }
+
+    public static void changePlayer()
+    {
+        player = getOtherPlayer();
+    }
+
+    public static char getOtherSymbol(Character symbol){
+        if (symbol == playerSymbol1)
+            return playerSymbol2;
+        else
+            return playerSymbol1;
+    }
+
 }
