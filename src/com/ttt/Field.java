@@ -1,11 +1,12 @@
 package com.ttt;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Field {
 
-    private char[][] cell = new char[3][3];
-    private HashMap<Integer, Integer[]> cellNumbers = new HashMap<Integer, Integer[]>();
+    private final char[][] cell = new char[3][3];
+    private final HashMap<Integer, Integer[]> cellNumbers = new HashMap<>();
 
     public Field() {
         initialFill();
@@ -54,21 +55,63 @@ public class Field {
         }
     }
 
-    public void fillCell(int userCell, char player) throws Exception
+    public void fillCell(int userCell) throws Exception
     {
-                    Integer[] cellCoord = cellNumbers.get(userCell);
-                    if (cell[cellCoord[0]][cellCoord[1]] == ' ')
-                    {
-                        cell[cellCoord[0]][cellCoord[1]] = player;
-                        return;
-                    } else {
-                        throw new Exception("The cell is already occupied");
-                    }
+        if (userCell == 0 || userCell > 9)
+        {
+            throw new Exception("Enter a valid cell number");
+        }
+        fillCell(cellNumbers.get(userCell));
     }
 
-    public char[] getLine(int lineNum)
+    public void fillCell(Integer[] cellCoords) throws Exception
     {
-        return cell[lineNum];
+
+        if (cell[cellCoords[0]][cellCoords[1]] == ' ')
+        {
+            cell[cellCoords[0]][cellCoords[1]] = Main.getCurrentPlayer();
+        } else {
+            throw new Exception("The cell is already occupied");
+        }
+    }
+
+    public ArrayList<Character> getRow(int rowNum)
+    {
+        ArrayList<Character> line = new ArrayList<>(3);
+        for (int i = 0; i < 3; i++)
+        {
+            line.add(i, cell[rowNum][i]);
+        }
+        return line;
+    }
+
+    public ArrayList<Character> getColumn(int columnNum)
+    {
+        ArrayList<Character> line = new ArrayList<>(3);
+        for (int i = 0; i < 3; i++)
+        {
+            line.add(i, cell[i][columnNum]);
+        }
+        return line;
+    }
+
+    public Integer[] cellNumToCoord(int cellNum)
+    {
+        return cellNumbers.get(cellNum);
+    }
+
+    public ArrayList<Character> getDiagonal(int diagonalNum)
+    {
+        //
+        ArrayList<Character> line = new ArrayList<>(3);
+        for (int i = 0; i < 3; i++)
+        {
+            if (diagonalNum == 0)
+                line.add(i, cell[i][i]);
+            else if (diagonalNum == 1)
+                line.add(i, cell[0+i][2-i]);
+        }
+        return line;
     }
 
 }
