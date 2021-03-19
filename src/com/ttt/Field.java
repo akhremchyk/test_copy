@@ -7,6 +7,7 @@ public class Field {
 
     private final char[][] cell = new char[3][3];
     private final HashMap<Integer, Integer[]> cellNumbers = new HashMap<>();
+    public boolean bla = false;
 
     public Field() {
         initialFill();
@@ -112,6 +113,43 @@ public class Field {
                 line.add(i, cell[i][2-i]);
         }
         return line;
+    }
+
+    public boolean isFull()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                if (cell[i][j] == ' ')
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    public Character getWinner()
+    {
+
+        for (int i = 0; i < 3; i++)
+        {
+            ArrayList<Character> row = getRow(i);
+            if ((row.get(0) == row.get(1)) && (row.get(1) == row.get(2)))
+                return row.get(0);
+        }
+        for (int i = 0; i < 3; i++)
+        {
+            ArrayList<Character> column = getColumn(i);
+            if ((column.get(0) == column.get(1)) && (column.get(1) == column.get(2)))
+                return column.get(0);
+        }
+        for (int i = 0; i < 2; i++)
+        {
+            ArrayList<Character> diagonal = getDiagonal(i);
+            if ((diagonal.get(0) == diagonal.get(1)) && (diagonal.get(1) == diagonal.get(2)))
+                return diagonal.get(0);
+        }
+        return ' ';
     }
 
 }

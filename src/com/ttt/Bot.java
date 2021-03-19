@@ -7,10 +7,10 @@ public class Bot {
 
     private Character symbol;
     private boolean isOn; // indicates whether the bot is working or not
-    private Field field = Main.getField();
+    private final Field field = Main.getField();
 
 
-    public Integer[] turn() throws Exception {
+    public Integer[] turn() {
 
         // Bot scans for lines with two identical symbols and a clear cell and fills it.
         // Bot's symbol is in priority in order to win instantly.
@@ -115,8 +115,8 @@ public class Bot {
                     // if there are 2 sought symbols, there is only 1 free cell
                     if (i == 0)
                         return new Integer[]{clearCellCoord, clearCellCoord};
-                    else if (i == 1)
-                        return new Integer[]{0 + clearCellCoord,2 - clearCellCoord};
+                    else
+                        return new Integer[]{clearCellCoord,2 - clearCellCoord};
                 }
             }
         }

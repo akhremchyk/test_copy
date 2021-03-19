@@ -6,10 +6,11 @@ public class Main {
 
     private static final Field field = new Field();
     private static final Scanner scan = new Scanner(System.in);
+    private static final Bot bot = new Bot();
     private static final Character playerSymbol1 = 'X';
     private static final Character playerSymbol2 = 'O';
     private static Character player = playerSymbol1;
-    private static Bot bot = new Bot();
+
 
 
     public static void main(String[] args) {
@@ -18,7 +19,12 @@ public class Main {
         System.out.println("To fill a cell enter its number\n");
         bot.setSymbol(playerSymbol2);
 
-        gameBody();
+        for (;;){
+            gameBody();
+            field.bla = true;
+        }
+
+
 
     }
 
@@ -26,15 +32,19 @@ public class Main {
 
 //        TODO cls
 
+        field.initialFill();
         field.printField();
+        field.clearField();
 
         System.out.println("1. Player vs Computer");
         System.out.println("2. Player vs Player");
 
+        player = playerSymbol1;
 
         for (; ; )
         {
-            try {
+            try
+            {
                 int sw; // switch
                 if (scan.hasNextInt()) {
                     sw = scan.nextInt();
@@ -69,13 +79,36 @@ public class Main {
         System.out.println("Player " + player + "'s turn");
         field.clearField();
 
+        Character winner;
         for(;;)
         {
             turn();
             field.printField();
+            winner = field.getWinner();
+            if (winner != ' ')
+            {
+                break;
+            }
+            if (field.isFull())
+            {
+                break;
+            }
             changePlayer();
         }
+        end(winner);
 
+    }
+
+    private static void end (Character winner)
+    {
+        if (winner == ' ')
+        {
+            System.out.println("Draw!");
+        }
+        else
+        {
+            System.out.println("Player " + winner + " won!");
+        }
     }
 
     private static void turn() {
@@ -84,6 +117,7 @@ public class Main {
         {
             try{
                 if (bot.isOn() && player == bot.getSymbol()){
+                    Thread.sleep(300);
                     field.fillCell(bot.turn());
                 }
                 else {
