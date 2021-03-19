@@ -109,7 +109,7 @@ public class Field {
             if (diagonalNum == 0)
                 line.add(i, cell[i][i]);
             else if (diagonalNum == 1)
-                line.add(i, cell[0+i][2-i]);
+                line.add(i, cell[i][2-i]);
         }
         return line;
     }
