@@ -7,7 +7,6 @@ public class Field {
 
     private final char[][] cell = new char[3][3];
     private final HashMap<Integer, Integer[]> cellNumbers = new HashMap<>();
-    public boolean bla = false;
 
     public Field() {
         initialFill();

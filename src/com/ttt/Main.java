@@ -19,10 +19,9 @@ public class Main {
         System.out.println("To fill a cell enter its number\n");
         bot.setSymbol(playerSymbol2);
 
-        for (;;){
+        for (;;)
             gameBody();
-            field.bla = true;
-        }
+
 
 
 
@@ -115,7 +114,8 @@ public class Main {
 
         for(;;)
         {
-            try{
+            try
+            {
                 if (bot.isOn() && player == bot.getSymbol()){
                     Thread.sleep(300);
                     field.fillCell(bot.turn());
@@ -139,10 +139,12 @@ public class Main {
 
     private static int playerTurn(){
         int playerCell;
-        if (scan.hasNextInt()) {
+        if (scan.hasNextInt())
+        {
             playerCell = scan.nextInt();
             return  playerCell;
-        } else {
+        } else
+            {
             scan.nextLine();
             return 0;
         }
