@@ -27,16 +27,28 @@ public class Main {
 
     }
 
+    private static int scanInt() throws Exception
+    {
+        if (scan.hasNextInt()) {
+            return scan.nextInt();
+        } else {
+            scan.nextLine();
+//                    to clear the input stream, ignore the rest of the symbols
+//                     in the line with a mistake and show only one error message
+            throw new Exception("Enter a valid number");
+        }
+    }
+
     private static void gameBody() {
 
 //        TODO cls
 
         field.initialFill();
         field.printField();
-        field.clearField();
 
         System.out.println("1. Player vs Computer");
         System.out.println("2. Player vs Player");
+        System.out.println("3. Set Bot difficulty");
 
         player = playerSymbol1;
 
@@ -44,15 +56,7 @@ public class Main {
         {
             try
             {
-                int sw; // switch
-                if (scan.hasNextInt()) {
-                    sw = scan.nextInt();
-                } else {
-                    scan.nextLine();
-//                    to clear the input stream, ignore the rest of the symbols
-//                     in the line with a mistake and show only one error message
-                    throw new Exception("Enter a valid number");
-                }
+                int sw = scanInt(); // switch
 
                 if (sw == 1) {
                     bot.setState(true);
@@ -60,6 +64,13 @@ public class Main {
                 } else if (sw == 2) {
                     bot.setState(false);
                     break;
+                } else if (sw == 3)
+                {
+                    botSettings();
+                    field.printField();
+                    System.out.println("1. Player vs Computer");
+                    System.out.println("2. Player vs Player");
+                    System.out.println("3. Set bot's difficulty");
                 }
                 else
                 {
@@ -74,6 +85,7 @@ public class Main {
             }
         }
 
+        field.clearField();
         field.printField();
         System.out.println("Player " + player + "'s turn");
         field.clearField();
@@ -96,6 +108,24 @@ public class Main {
         }
         end(winner);
 
+    }
+
+    private static void botSettings()
+    {
+
+        System.out.println("1. Easy");
+        System.out.println("2. Medium");
+        try {
+            int diff = scanInt();
+            bot.setDifficulty(diff);
+            return;
+        }
+        catch (Exception err)
+        {
+            System.out.println(err.getMessage());
+//                     FIXME if (scan.hasNext())
+//                      scan.next();
+        }
     }
 
     private static void end (Character winner)

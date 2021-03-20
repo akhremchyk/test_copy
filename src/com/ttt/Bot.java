@@ -8,10 +8,27 @@ public class Bot {
     private Character symbol;
     private boolean isOn; // indicates whether the bot is working or not
     private final Field field = Main.getField();
+    private int difficulty = 2;
 
 
-    public Integer[] turn() {
+    public Integer[] turn()
+    {
+        if (difficulty == 1)
+            return easyDifficulty();
 
+        else
+            return mediumDifficulty();
+
+    }
+
+    private Integer[] easyDifficulty()
+    {
+        Random rand = new Random();
+        return field.cellNumToCoord(rand.nextInt(9) + 1);
+    }
+
+    private Integer[] mediumDifficulty()
+    {
         // Bot scans for lines with two identical symbols and a clear cell and fills it.
         // Bot's symbol is in priority in order to win instantly.
         // If there are none such cells, it just fills a random cell.
@@ -122,6 +139,14 @@ public class Bot {
         }
 
         return null;
+    }
+
+    public void setDifficulty(int userDiff) throws Exception
+    {
+        if (userDiff < 1 || userDiff > 4)
+            throw new Exception("Enter a valid number");
+        else
+        this.difficulty = userDiff;
     }
 
     public void setSymbol(Character userSymbol)
