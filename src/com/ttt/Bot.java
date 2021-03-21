@@ -58,47 +58,41 @@ public class Bot {
     {
         Integer[] bestMove = {0, 0};
         double bestScore = Double.NEGATIVE_INFINITY;
-        for (int i = 0; i < 3; i++){
+        for (int i = 0; i < 3; i++)
+        {
             for (int j = 0; j < 3; j++)
             {
-                Field simulationField = new Field();
-                simulationField.setCurrentPlayer(getSymbol());
-                simulationField.setCellArray(field.getCellArray());
+                field.setCurrentPlayer(symbol);
                 try
                 {
-                    simulationField.fillCell(new Integer[]{i, j});
+                    field.fillCell(new Integer[]{i, j});
                 }
                 catch (Exception err) { continue; }
-                    System.out.println("SIMULATION"); //FIXME
-                    simulationField.printField();
-//                    System.out.println("ACTUAL"); //FIXME
-//                    field.printField();
-                    double score = minimax(simulationField, false, 0);
-                    if (score > bestScore)
-                    {
-                        bestScore = score;
-                        bestMove[0] = i;
-                        bestMove[1] = j;
-                    }
+//                field.printField();
+                double score = minimax(field, false, 0);
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    bestMove[0] = i;
+                    bestMove[1] = j;
+                }
+                field.clearCell(new Integer[] {i,j});
                 System.out.println(score);
-                System.out.println(bestScore);
-
             }
         }
-
+        field.setCurrentPlayer(symbol);
         return bestMove;
     }
 
-    private double minimax(Field simulationField, boolean isMaximizing, double depth)
+    private double minimax(Field fieldSimulation, boolean isMaximizing, double depth)
     {
-        System.out.println("SIMULATION 1"); //FIXME
-        simulationField.printField();
-        Character result = simulationField.checkWinner();
+        Character result = fieldSimulation.checkWinner();
         if (result == getSymbol()) {
-                return 10;
+            if (isMaximizing)
+                return 10 - depth;
         }
         else if (result == Field.getOtherSymbol(getSymbol()))
-                return -10;
+                return -10 + depth;
         else if (result == ' ')
             return 0;
 
@@ -106,21 +100,19 @@ public class Bot {
         if (isMaximizing)
         {
             bestScore = Double.NEGATIVE_INFINITY;
-            for (int i = 0; i < 3; i++){
+            for (int i = 0; i < 3; i++)
+            {
                 for (int j = 0; j < 3; j++)
                 {
-                    simulationField.setCurrentPlayer(symbol);
+                    fieldSimulation.setCurrentPlayer(symbol);
                     Integer[] coord = {i, j};
-                    try { simulationField.fillCell(coord); }
+                    try { fieldSimulation.fillCell(coord); }
                     catch (Exception err) { continue; }
-                    System.out.println("SIMULATION 2"); //FIXME
-                    simulationField.printField();
-                    Field simulationFieldNew = new Field();
-                    simulationFieldNew.setCurrentPlayer(simulationField.getCurrentPlayer());
-                    simulationFieldNew.setCellArray(simulationField.getCellArray());
-                        double score = minimax(simulationFieldNew,
+//                    field.printField();
+                    double score = minimax(fieldSimulation,
                                 false, depth + 1);
-                        bestScore = Math.max(score, bestScore);
+                    bestScore = Math.max(score, bestScore);
+                    fieldSimulation.clearCell(new Integer[] {i,j});
                 }
             }
         }
@@ -130,16 +122,15 @@ public class Bot {
             for (int i = 0; i < 3; i++){
                 for (int j = 0; j < 3; j++)
                 {
-                    simulationField.setCurrentPlayer(Field.getOtherSymbol(symbol));
+                    fieldSimulation.setCurrentPlayer(Field.getOtherSymbol(symbol));
                     Integer[] coord = {i, j};
-                    try { simulationField.fillCell(coord); }
+                    try { fieldSimulation.fillCell(coord); }
                     catch (Exception err) { continue; }
-                    Field simulationFieldNew = new Field();
-                    simulationFieldNew.setCurrentPlayer(simulationField.getCurrentPlayer());
-                    simulationFieldNew.setCellArray(simulationField.getCellArray());
-                    double score = minimax(simulationField,
+//                    field.printField();
+                    double score = minimax(fieldSimulation,
                             true, depth + 1);
                     bestScore = Math.min(score, bestScore);
+                    fieldSimulation.clearCell(new Integer[] {i,j});
                 }
             }
         }

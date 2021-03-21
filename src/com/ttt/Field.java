@@ -79,6 +79,11 @@ public class Field implements Cloneable{
         }
     }
 
+    public void clearCell(Integer[] cellCoords)
+    {
+        cell[cellCoords[0]][cellCoords[1]] = ' ';
+    }
+
     public ArrayList<Character> getRow(int rowNum)
     {
         ArrayList<Character> line = new ArrayList<>(3);
