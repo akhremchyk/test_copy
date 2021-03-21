@@ -7,9 +7,7 @@ public class Main {
     private static final Field field = new Field();
     private static final Scanner scan = new Scanner(System.in);
     private static final Bot bot = new Bot();
-    private static final Character playerSymbol1 = 'X';
-    private static final Character playerSymbol2 = 'O';
-    private static Character player = playerSymbol1;
+
 
 
 
@@ -17,12 +15,9 @@ public class Main {
 
         field.printField();
         System.out.println("To fill a cell enter its number\n");
-        bot.setSymbol(playerSymbol2);
+        bot.setSymbol(field.getSecondSymbol());
 
-        for (;;)
-            gameBody();
-
-
+        while (gameBody());
 
 
     }
@@ -39,18 +34,17 @@ public class Main {
         }
     }
 
-    private static void gameBody() {
+    private static boolean gameBody() {
 
 //        TODO cls
 
         field.initialFill();
         field.printField();
+        field.setCurrentPlayer(Field.getFirstSymbol());
 
         System.out.println("1. Player vs Computer");
         System.out.println("2. Player vs Player");
         System.out.println("3. Set Bot difficulty");
-
-        player = playerSymbol1;
 
         for (; ; )
         {
@@ -61,16 +55,22 @@ public class Main {
                 if (sw == 1) {
                     bot.setState(true);
                     break;
-                } else if (sw == 2) {
+                }
+                else if (sw == 2) {
                     bot.setState(false);
                     break;
-                } else if (sw == 3)
+                }
+                else if (sw == 3)
                 {
                     botSettings();
                     field.printField();
                     System.out.println("1. Player vs Computer");
                     System.out.println("2. Player vs Player");
                     System.out.println("3. Set bot's difficulty");
+                }
+                else if (sw == 4)
+                {
+                    return false;
                 }
                 else
                 {
@@ -87,7 +87,7 @@ public class Main {
 
         field.clearField();
         field.printField();
-        System.out.println("Player " + player + "'s turn");
+        System.out.println("Player " + field.getCurrentPlayer() + "'s turn");
         field.clearField();
 
         Character winner;
@@ -95,36 +95,33 @@ public class Main {
         {
             turn();
             field.printField();
-            winner = field.getWinner();
-            if (winner != ' ')
+            winner = field.checkWinner();
+            if (winner != '0')
             {
                 break;
             }
-            if (field.isFull())
-            {
-                break;
-            }
-            changePlayer();
+
+            field.changePlayer();
         }
         end(winner);
-
+        return true;
     }
 
-    private static void botSettings()
-    {
+    private static void botSettings() {
 
         System.out.println("1. Easy");
         System.out.println("2. Medium");
-        try {
-            int diff = scanInt();
-            bot.setDifficulty(diff);
-            return;
-        }
-        catch (Exception err)
+        for (; ; )
         {
-            System.out.println(err.getMessage());
-//                     FIXME if (scan.hasNext())
-//                      scan.next();
+            try {
+                int diff = scanInt();
+                bot.setDifficulty(diff);
+                return;
+            } catch (Exception err) {
+                System.out.println(err.getMessage());
+    //                     FIXME if (scan.hasNext())
+    //                      scan.next();
+            }
         }
     }
 
@@ -146,7 +143,8 @@ public class Main {
         {
             try
             {
-                if (bot.isOn() && player == bot.getSymbol()){
+                if (bot.isOn() && field.getCurrentPlayer() == bot.getSymbol()){
+                    Character curr = field.getCurrentPlayer();
                     Thread.sleep(300);
                     field.fillCell(bot.turn());
                 }
@@ -156,7 +154,7 @@ public class Main {
                 return;
             }
             catch (Exception err) {
-                if (bot.isOn() && player != bot.getSymbol())
+                if (!bot.isOn() || field.getCurrentPlayer() != bot.getSymbol())
 //                in order not to show errors during the bot's turn
                 {
                     System.out.println(err.getMessage());
@@ -178,31 +176,6 @@ public class Main {
             scan.nextLine();
             return 0;
         }
-    }
-
-    public static char getCurrentPlayer ()
-    {
-        return player;
-    }
-
-    public static char getOtherPlayer ()
-    {
-        if (player == playerSymbol1)
-           return playerSymbol2;
-        else
-            return playerSymbol1;
-    }
-
-    public static void changePlayer()
-    {
-        player = getOtherPlayer();
-    }
-
-    public static char getOtherSymbol(Character symbol){
-        if (symbol == playerSymbol1)
-            return playerSymbol2;
-        else
-            return playerSymbol1;
     }
 
     public static Field getField()
