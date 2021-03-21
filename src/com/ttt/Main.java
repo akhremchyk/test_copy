@@ -15,7 +15,7 @@ public class Main {
 
         field.printField();
         System.out.println("To fill a cell enter its number\n");
-        bot.setSymbol(field.getSecondSymbol());
+        bot.setSymbol(Field.getSecondSymbol());
 
         while (gameBody());
 
@@ -144,7 +144,6 @@ public class Main {
             try
             {
                 if (bot.isOn() && field.getCurrentPlayer() == bot.getSymbol()){
-                    Character curr = field.getCurrentPlayer();
                     Thread.sleep(300);
                     field.fillCell(bot.turn());
                 }

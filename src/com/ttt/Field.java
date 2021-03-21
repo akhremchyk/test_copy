@@ -166,11 +166,6 @@ public class Field implements Cloneable{
             return '0';
     }
 
-    public Character getCell(int x, int y)
-    {
-        return cell[x][y];
-    }
-
     public void setCurrentPlayer(Character input)
     {
         currentPlayer = input;
@@ -191,8 +186,7 @@ public class Field implements Cloneable{
 
     public void changePlayer()
     {
-        char other = getOtherPlayer();
-        currentPlayer = other;
+        currentPlayer = getOtherPlayer();
     }
 
     public static char getOtherSymbol(Character symbol){
@@ -212,20 +206,6 @@ public class Field implements Cloneable{
         return playerSymbol2;
     }
 
-    public char[][] getCellArray() {
-        return cell;
-    }
-
-    public void setCellArray(char[][] inCellArray)
-    {
-        for (int i = 0; i < 3; i++) {
-            System.arraycopy(inCellArray[i], 0, this.cell[i], 0, 3);
-        }
-    }
-
-    public HashMap<Integer, Integer[]> getCellNumbersMap() {
-        return cellNumbers;
-    }
 }
 
 
