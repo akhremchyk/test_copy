@@ -16,16 +16,17 @@ public class Bot {
     {
         if (difficulty == 1)
             return easyDifficulty();
-        else if (difficulty == 3) {
-            return hardDifficulty();
+        else if (difficulty == 2) {
+            return mediumDifficulty();
         }
         else
-            return mediumDifficulty();
+            return hardDifficulty();
 
     }
 
     private Integer[] easyDifficulty()
     {
+        // Picks random cell every time
         Random rand = new Random();
         return field.cellNumToCoord(rand.nextInt(9) + 1);
     }
@@ -58,6 +59,7 @@ public class Bot {
     {
         Integer[] bestMove = {0, 0};
         double bestScore = Double.NEGATIVE_INFINITY;
+        double cell5Score = Double.NEGATIVE_INFINITY;
         for (int i = 0; i < 3; i++)
         {
             for (int j = 0; j < 3; j++)
@@ -68,7 +70,6 @@ public class Bot {
                     field.fillCell(new Integer[]{i, j});
                 }
                 catch (Exception err) { continue; }
-//                field.printField();
                 double score = minimax(field, false, 0);
                 if (score > bestScore)
                 {
@@ -76,11 +77,18 @@ public class Bot {
                     bestMove[0] = i;
                     bestMove[1] = j;
                 }
+                if (i == j && i == 1)
+                {
+                    cell5Score = score; // to choose central cell if it's not worse than the current best choise
+                }
+
                 field.clearCell(new Integer[] {i,j});
-                System.out.println(score);
             }
         }
         field.setCurrentPlayer(symbol);
+        if (cell5Score >= bestScore)
+            return new Integer[] {1,1};
+        else
         return bestMove;
     }
 
@@ -88,7 +96,6 @@ public class Bot {
     {
         Character result = fieldSimulation.checkWinner();
         if (result == getSymbol()) {
-            if (isMaximizing)
                 return 10 - depth;
         }
         else if (result == Field.getOtherSymbol(getSymbol()))
@@ -108,7 +115,6 @@ public class Bot {
                     Integer[] coord = {i, j};
                     try { fieldSimulation.fillCell(coord); }
                     catch (Exception err) { continue; }
-//                    field.printField();
                     double score = minimax(fieldSimulation,
                                 false, depth + 1);
                     bestScore = Math.max(score, bestScore);
@@ -126,7 +132,6 @@ public class Bot {
                     Integer[] coord = {i, j};
                     try { fieldSimulation.fillCell(coord); }
                     catch (Exception err) { continue; }
-//                    field.printField();
                     double score = minimax(fieldSimulation,
                             true, depth + 1);
                     bestScore = Math.min(score, bestScore);
