@@ -58,6 +58,8 @@ public class Bot {
 
     private Integer[] hardDifficulty()
     {
+        // Minimax algorithm using alpha-beta pruning
+
         Integer[] bestMove = {0, 0};
         double bestScore = Double.NEGATIVE_INFINITY;
         double cell5Score = Double.NEGATIVE_INFINITY;
@@ -71,7 +73,8 @@ public class Bot {
                     field.fillCell(new Integer[]{i, j});
                 }
                 catch (Exception err) { continue; }
-                double score = minimax(field, false, 0);
+                double score = minimax(field, false, 0,
+                        Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
                 if (score > bestScore)
                 {
                     bestScore = score;
@@ -119,16 +122,18 @@ public class Bot {
         }
     }
 
-    private double minimax(Field fieldSimulation, boolean isMaximizing, double depth)
+    private double minimax(Field fieldSimulation, boolean isMaximizing, double depth, double alpha, double beta)
     {
         Character result = fieldSimulation.checkWinner();
         if (result == getSymbol()) {
                 return 10 - depth;
         }
-        else if (result == Field.getOtherSymbol(getSymbol()))
-                return -10 + depth;
-        else if (result == ' ')
+        else if (result == Field.getOtherSymbol(getSymbol())) {
+            return -10 + depth;
+        }
+        else if (result == ' '){
             return 0;
+        }
 
         double bestScore;
         if (isMaximizing)
@@ -143,9 +148,12 @@ public class Bot {
                     try { fieldSimulation.fillCell(coord); }
                     catch (Exception err) { continue; }
                     double score = minimax(fieldSimulation,
-                                false, depth + 1);
+                                false, depth + 1, alpha, beta);
                     bestScore = Math.max(score, bestScore);
+                    alpha = Math.max(alpha, score);
                     fieldSimulation.clearCell(new Integer[] {i,j});
+                    if (alpha >= beta)
+                        return bestScore;
                 }
             }
         }
@@ -160,9 +168,12 @@ public class Bot {
                     try { fieldSimulation.fillCell(coord); }
                     catch (Exception err) { continue; }
                     double score = minimax(fieldSimulation,
-                            true, depth + 1);
+                            true, depth + 1, alpha, beta);
                     bestScore = Math.min(score, bestScore);
+                    beta = Math.min(beta, score);
                     fieldSimulation.clearCell(new Integer[] {i,j});
+                    if (alpha >= beta)
+                        return bestScore;
                 }
             }
         }
