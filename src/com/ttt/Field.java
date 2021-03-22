@@ -3,11 +3,13 @@ package com.ttt;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Field {
+public class Field implements Cloneable{
 
     private final char[][] cell = new char[3][3];
     private final HashMap<Integer, Integer[]> cellNumbers = new HashMap<>();
-    public boolean bla = false;
+    private static final Character playerSymbol1 = 'X';
+    private static final Character playerSymbol2 = 'O';
+    private Character currentPlayer = playerSymbol1;
 
     public Field() {
         initialFill();
@@ -24,6 +26,7 @@ public class Field {
             }
         }
     }
+
 
 
     public void printField()
@@ -70,10 +73,15 @@ public class Field {
 
         if (cell[cellCoords[0]][cellCoords[1]] == ' ')
         {
-            cell[cellCoords[0]][cellCoords[1]] = Main.getCurrentPlayer();
+            cell[cellCoords[0]][cellCoords[1]] = getCurrentPlayer();
         } else {
             throw new Exception("The cell is already occupied");
         }
+    }
+
+    public void clearCell(Integer[] cellCoords)
+    {
+        cell[cellCoords[0]][cellCoords[1]] = ' ';
     }
 
     public ArrayList<Character> getRow(int rowNum)
@@ -128,28 +136,74 @@ public class Field {
         return true;
     }
 
-    public Character getWinner()
+    public Character checkWinner()
     {
 
         for (int i = 0; i < 3; i++)
         {
             ArrayList<Character> row = getRow(i);
-            if ((row.get(0) == row.get(1)) && (row.get(1) == row.get(2)))
+            if ((row.get(0) == row.get(1)) && (row.get(1) == row.get(2))
+                    && row.get(0) != ' ')
                 return row.get(0);
         }
         for (int i = 0; i < 3; i++)
         {
             ArrayList<Character> column = getColumn(i);
-            if ((column.get(0) == column.get(1)) && (column.get(1) == column.get(2)))
+            if ((column.get(0) == column.get(1)) && (column.get(1) == column.get(2))
+                    && column.get(0) != ' ')
                 return column.get(0);
         }
         for (int i = 0; i < 2; i++)
         {
             ArrayList<Character> diagonal = getDiagonal(i);
-            if ((diagonal.get(0) == diagonal.get(1)) && (diagonal.get(1) == diagonal.get(2)))
+            if ((diagonal.get(0) == diagonal.get(1)) && (diagonal.get(1) == diagonal.get(2))
+                    && diagonal.get(0) != ' ')
                 return diagonal.get(0);
         }
-        return ' ';
+        if (isFull())
+            return ' ';
+        else
+            return '0';
+    }
+
+    public void setCurrentPlayer(Character input)
+    {
+        currentPlayer = input;
+    }
+
+    public char getCurrentPlayer()
+    {
+        return currentPlayer;
+    }
+
+    public char getOtherPlayer()
+    {
+        if (currentPlayer == playerSymbol1)
+            return playerSymbol2;
+        else
+            return playerSymbol1;
+    }
+
+    public void changePlayer()
+    {
+        currentPlayer = getOtherPlayer();
+    }
+
+    public static char getOtherSymbol(Character symbol){
+        if (symbol == playerSymbol1)
+            return playerSymbol2;
+        else
+            return playerSymbol1;
+    }
+
+    public static char getFirstSymbol()
+    {
+        return playerSymbol1;
+    }
+
+    public static char getSecondSymbol()
+    {
+        return playerSymbol2;
     }
 
 }

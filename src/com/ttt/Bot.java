@@ -8,21 +8,42 @@ public class Bot {
     private Character symbol;
     private boolean isOn; // indicates whether the bot is working or not
     private final Field field = Main.getField();
+    private int difficulty = 3;
 
 
-    public Integer[] turn() {
 
+    public Integer[] turn()
+    {
+        if (difficulty == 1)
+            return easyDifficulty();
+        else if (difficulty == 2) {
+            return mediumDifficulty();
+        }
+        else
+            return hardDifficulty();
+
+    }
+
+    private Integer[] easyDifficulty()
+    {
+        // Picks random cell every time
+        Random rand = new Random();
+        return field.cellNumToCoord(rand.nextInt(9) + 1);
+    }
+
+    private Integer[] mediumDifficulty()
+    {
         // Bot scans for lines with two identical symbols and a clear cell and fills it.
         // Bot's symbol is in priority in order to win instantly.
         // If there are none such cells, it just fills a random cell.
 
         Integer[] botCell;
 
-        botCell = scanForTwoAndClear(Main.getCurrentPlayer());
+        botCell = scanForTwoAndClear(field.getCurrentPlayer());
         if (botCell != null) {
             return botCell;
         } else {
-            botCell = scanForTwoAndClear(Main.getOtherPlayer());
+            botCell = scanForTwoAndClear(field.getOtherPlayer());
         }
 
         if (botCell != null) {
@@ -34,6 +55,93 @@ public class Bot {
         }
     }
 
+    private Integer[] hardDifficulty()
+    {
+        Integer[] bestMove = {0, 0};
+        double bestScore = Double.NEGATIVE_INFINITY;
+        double cell5Score = Double.NEGATIVE_INFINITY;
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                field.setCurrentPlayer(symbol);
+                try
+                {
+                    field.fillCell(new Integer[]{i, j});
+                }
+                catch (Exception err) { continue; }
+                double score = minimax(field, false, 0);
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    bestMove[0] = i;
+                    bestMove[1] = j;
+                }
+                if (i == j && i == 1)
+                {
+                    cell5Score = score; // to choose central cell if it's not worse than the current best choise
+                }
+
+                field.clearCell(new Integer[] {i,j});
+            }
+        }
+        field.setCurrentPlayer(symbol);
+        if (cell5Score >= bestScore)
+            return new Integer[] {1,1};
+        else
+        return bestMove;
+    }
+
+    private double minimax(Field fieldSimulation, boolean isMaximizing, double depth)
+    {
+        Character result = fieldSimulation.checkWinner();
+        if (result == getSymbol()) {
+                return 10 - depth;
+        }
+        else if (result == Field.getOtherSymbol(getSymbol()))
+                return -10 + depth;
+        else if (result == ' ')
+            return 0;
+
+        double bestScore;
+        if (isMaximizing)
+        {
+            bestScore = Double.NEGATIVE_INFINITY;
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    fieldSimulation.setCurrentPlayer(symbol);
+                    Integer[] coord = {i, j};
+                    try { fieldSimulation.fillCell(coord); }
+                    catch (Exception err) { continue; }
+                    double score = minimax(fieldSimulation,
+                                false, depth + 1);
+                    bestScore = Math.max(score, bestScore);
+                    fieldSimulation.clearCell(new Integer[] {i,j});
+                }
+            }
+        }
+        else
+        {
+            bestScore = Double.POSITIVE_INFINITY;
+            for (int i = 0; i < 3; i++){
+                for (int j = 0; j < 3; j++)
+                {
+                    fieldSimulation.setCurrentPlayer(Field.getOtherSymbol(symbol));
+                    Integer[] coord = {i, j};
+                    try { fieldSimulation.fillCell(coord); }
+                    catch (Exception err) { continue; }
+                    double score = minimax(fieldSimulation,
+                            true, depth + 1);
+                    bestScore = Math.min(score, bestScore);
+                    fieldSimulation.clearCell(new Integer[] {i,j});
+                }
+            }
+        }
+        return bestScore;
+    }
+
     private Integer[] scanForTwoAndClear(char soughtSymbol)
     {
 //      scans for a row with 2 identical symbols and a clear cell
@@ -42,7 +150,7 @@ public class Bot {
         for (int i = 0; i < 3; i++)
         {
             checkedLine = field.getRow(i);
-            if (!checkedLine.contains(Main.getOtherSymbol(soughtSymbol))
+            if (!checkedLine.contains(Field.getOtherSymbol(soughtSymbol))
                     && checkedLine.contains(soughtSymbol))
             {
                 int symbolCtr = 0; //counter to count how much sought symbols are there
@@ -69,7 +177,7 @@ public class Bot {
         for (int i = 0; i < 3; i++)
         {
             checkedLine = field.getColumn(i);
-            if (!checkedLine.contains(Main.getOtherSymbol(soughtSymbol))
+            if (!checkedLine.contains(Field.getOtherSymbol(soughtSymbol))
                     && checkedLine.contains(soughtSymbol))
             {
                 int symbolCtr = 0; //counter to count how much sought symbols are there
@@ -96,7 +204,7 @@ public class Bot {
         for (int i = 0; i < 2; i++)
         {
             checkedLine = field.getDiagonal(i);
-            if (!checkedLine.contains(Main.getOtherSymbol(soughtSymbol))
+            if (!checkedLine.contains(Field.getOtherSymbol(soughtSymbol))
                     && checkedLine.contains(soughtSymbol))
             {
                 int symbolCtr = 0; //counter to count how much sought symbols are there
@@ -122,6 +230,14 @@ public class Bot {
         }
 
         return null;
+    }
+
+    public void setDifficulty(int userDiff) throws Exception
+    {
+        if (userDiff < 1 || userDiff > 4)
+            throw new Exception("Enter a valid number");
+        else
+        this.difficulty = userDiff;
     }
 
     public void setSymbol(Character userSymbol)
