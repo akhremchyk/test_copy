@@ -1,5 +1,6 @@
 package com.ttt;
 
+import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
@@ -7,6 +8,7 @@ public class Main {
     private static final Field field = new Field();
     private static final Scanner scan = new Scanner(System.in);
     private static final Bot bot = new Bot();
+    private static boolean isBotsSymbolRandom = false; // true = the bot's symbol is chosen randomly every game
 
 
 
@@ -17,7 +19,12 @@ public class Main {
         System.out.println("To fill a cell enter its number\n");
         bot.setSymbol(Field.getSecondSymbol());
 
-        while (gameBody());
+        while (menu())
+        {
+            try{Thread.sleep(1000);}
+            catch (Exception err){ System.out.println(err.getMessage());}
+        }
+
 
 
     }
@@ -34,7 +41,7 @@ public class Main {
         }
     }
 
-    private static boolean gameBody() {
+    private static boolean menu() {
 
 //        TODO cls
 
@@ -42,9 +49,9 @@ public class Main {
         field.printField();
         field.setCurrentPlayer(Field.getFirstSymbol());
 
-        System.out.println("1. Player vs Computer");
-        System.out.println("2. Player vs Player");
-        System.out.println("3. Set Bot difficulty");
+        System.out.println("1. Play");
+        System.out.println("2. Bot's settings");
+        System.out.println("3. Quit");
 
         for (; ; )
         {
@@ -53,22 +60,17 @@ public class Main {
                 int sw = scanInt(); // switch
 
                 if (sw == 1) {
-                    bot.setState(true);
+                    game();
                     break;
                 }
                 else if (sw == 2) {
-                    bot.setState(false);
-                    break;
-                }
-                else if (sw == 3)
-                {
                     botSettings();
                     field.printField();
-                    System.out.println("1. Player vs Computer");
-                    System.out.println("2. Player vs Player");
-                    System.out.println("3. Set bot's difficulty");
+                    System.out.println("1. Play");
+                    System.out.println("2. Bot's settings");
+                    System.out.println("3. Quit");
                 }
-                else if (sw == 4)
+                else if (sw == 3)
                 {
                     return false;
                 }
@@ -85,9 +87,46 @@ public class Main {
             }
         }
 
-        field.clearField();
+        return true;
+    }
+
+    private static void game()
+    {
+
+        if (isBotsSymbolRandom)
+        {
+            Random rand = new Random();
+            int symbolNumber = rand.nextInt(2)+1;
+            if (symbolNumber == 1)
+                bot.setSymbol(Field.getFirstSymbol());
+            else
+                bot.setSymbol(Field.getSecondSymbol());
+        }
+
+        System.out.println("1. Player vs Computer");
+        System.out.println("2. Player vs Player");
+
+        for(;;)
+        {
+            try {
+                int sw = scanInt(); // switch
+                if (sw == 1) {
+                    bot.setState(true);
+                    break;
+                } else if (sw == 2) {
+                    bot.setState(false);
+                    break;
+                }
+            } catch (Exception err) {
+                System.out.println(err.getMessage());
+//                     FIXME if (scan.hasNext())
+//                      scan.next();
+            }
+        }
+
+        field.initialFill();
         field.printField();
-        System.out.println("Player " + field.getCurrentPlayer() + "'s turn");
+        System.out.println("Player " + field.getCurrentPlayer() + "'s turn\n");
         field.clearField();
 
         Character winner;
@@ -104,10 +143,39 @@ public class Main {
             field.changePlayer();
         }
         end(winner);
-        return true;
     }
 
     private static void botSettings() {
+
+        System.out.println("1. Bot's difficulty");
+        System.out.println("2. Bot's symbol");
+
+        for(;;)
+        {
+            try {
+                int sw = scanInt(); // switch
+                if (sw == 1) {
+                    chooseBotsDifficulty();
+                    break;
+                }
+                else if (sw == 2) {
+                    chooseBotsSymbol();
+                    break;
+                }
+                else
+                {
+                    throw new Exception("Enter a valid number");
+                }
+            } catch (Exception err) {
+                System.out.println(err.getMessage());
+//                     FIXME if (scan.hasNext())
+//                      scan.next();
+            }
+        }
+
+    }
+
+    private static void chooseBotsDifficulty() {
 
         System.out.println("1. Easy");
         System.out.println("2. Medium");
@@ -116,8 +184,8 @@ public class Main {
         for (; ; )
         {
             try {
-                int diff = scanInt();
-                bot.setDifficulty(diff);
+                int difficulty = scanInt();
+                bot.setDifficulty(difficulty);
                 return;
             } catch (Exception err) {
                 System.out.println(err.getMessage());
@@ -127,8 +195,41 @@ public class Main {
         }
     }
 
+    private static void chooseBotsSymbol()
+    {
+        System.out.println("1. Always " + Field.getSecondSymbol());
+        System.out.println("2. Always " + Field.getFirstSymbol());
+        System.out.println("3. Random every time");
+        for (; ; )
+        {
+            try {
+                int value = scanInt(); // switch
+                if (value < 1 || value > 3)
+                    throw new Exception("Enter a valid number");
+                else if (value == 3)
+                    isBotsSymbolRandom = true;
+
+                if (value == 1)
+                    bot.setSymbol(Field.getSecondSymbol());
+                else
+                    bot.setSymbol(Field.getFirstSymbol());
+
+                return;
+
+            } catch (Exception err) {
+                System.out.println(err.getMessage());
+                //                     FIXME if (scan.hasNext())
+                //                      scan.next();
+            }
+        }
+    }
+
     private static void end (Character winner)
     {
+
+        try{Thread.sleep(300);}
+        catch (Exception err){ System.out.println(err.getMessage());}
+
         if (winner == ' ')
         {
             System.out.println("Draw!");
