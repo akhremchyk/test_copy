@@ -6,7 +6,7 @@ import java.util.Random;
 public class Bot {
 
     private Character symbol;
-    private boolean isOn; // indicates whether the bot is working or not
+    private boolean isOn; // indicates whether the bot is turned on or not
     private final Field field = Main.getField();
     private int difficulty = 3;
 
@@ -100,7 +100,7 @@ public class Bot {
     {
         // Bot scans for lines with two identical symbols and fills the third cell.
         // If there are two bot's symbols it fills the third cell regardless of whether it's empty or not.
-        // If there are none such cells, it just fills a random cell.
+        // If there are none such cells, it fills cell using minimax algorithm.
 
         Integer[] botCell;
 
@@ -117,8 +117,7 @@ public class Bot {
             return  botCell;
         }
         else {
-            Random rand = new Random();
-            return field.cellNumToCoord(rand.nextInt(9) + 1);
+            return hardDifficulty();
         }
     }
 

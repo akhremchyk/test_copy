@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class Field implements Cloneable{
 
-    private final char[][] cell = new char[3][3];
+    private final Character[][] cell = new Character[3][3];
     private final HashMap<Integer, Integer[]> cellNumbers = new HashMap<>();
     private static final Character playerSymbol1 = 'X';
     private static final Character playerSymbol2 = 'O';
@@ -171,12 +171,12 @@ public class Field implements Cloneable{
         currentPlayer = input;
     }
 
-    public char getCurrentPlayer()
+    public Character getCurrentPlayer()
     {
         return currentPlayer;
     }
 
-    public char getOtherPlayer()
+    public Character getOtherPlayer()
     {
         if (currentPlayer == playerSymbol1)
             return playerSymbol2;
@@ -189,21 +189,26 @@ public class Field implements Cloneable{
         currentPlayer = getOtherPlayer();
     }
 
-    public static char getOtherSymbol(Character symbol){
+    public static Character getOtherSymbol(Character symbol){
         if (symbol == playerSymbol1)
             return playerSymbol2;
         else
             return playerSymbol1;
     }
 
-    public static char getFirstSymbol()
+    public static Character getFirstSymbol()
     {
         return playerSymbol1;
     }
 
-    public static char getSecondSymbol()
+    public static Character getSecondSymbol()
     {
         return playerSymbol2;
+    }
+
+    public Character[][] getCellArray()
+    {
+        return cell;
     }
 
 }
