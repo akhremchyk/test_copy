@@ -3,21 +3,28 @@ package com.ttt;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class Gui extends JFrame {
+// The GUI could be better
 
-    private Field field = Main.getField();
-    private Bot bot = Main.getBot();
+public class Gui extends JFrame implements ActionListener {
+
+    private final Field field = Main.getField();
+    private final Bot bot = Main.getBot();
     private final GridPanel gridPanel;
     private final JPanel menuPanel;
-    private CellLabel[][] cellLabels= new CellLabel[3][3];
+    private final CellLabel[][] cellLabels= new CellLabel[3][3];
+    private boolean isGameOn = false;
+    private final JButton settingsButton;
+    private final JButton startButton;
 
     public Gui()
     {
 
         this.setTitle("Tic-tac-toe XO");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        this.setResizable(false);
+        this.setResizable(false);
         this.setSize(420,520);
         this.setVisible(true);
         this.setLocationRelativeTo(null);
@@ -28,22 +35,20 @@ public class Gui extends JFrame {
         gridPanel.setBackground(Color.BLACK);
         initCellLabels();
 
-
         menuPanel = new JPanel();
         this.add(menuPanel, BorderLayout.SOUTH);
         menuPanel.setBackground(Color.BLACK);
 
-
-        JButton startButton = new JButton();
+        startButton = new JButton();
         menuPanel.add(startButton);
         startButton.setBackground(Color.WHITE);
         startButton.setPreferredSize(new Dimension(100,30));
         startButton.setFocusable(false);
+        startButton.addActionListener(this);
         startButton.setText("Play!");
         startButton.setVisible(true);
 
-
-        JButton settingsButton = new JButton();
+        settingsButton = new JButton();
         menuPanel.add(settingsButton);
         settingsButton.setBackground(Color.WHITE);
         settingsButton.setPreferredSize(new Dimension(30,30));
@@ -70,6 +75,106 @@ public class Gui extends JFrame {
                 gridPanel.add(cellLabels[i][j]);
             }
         }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == startButton)
+        {
+            startGame();
+        }
+    }
+
+    public boolean isGameOn()
+    {
+        return isGameOn;
+    }
+
+    public void setGameOff() {isGameOn = false;}
+
+    public void startGame()
+    {
+        bot.setState(true);
+        bot.setSymbol(Field.getSecondSymbol());
+        try{bot.setDifficulty(4);}
+        catch (Exception err){ System.out.println(err.getMessage()); }
+        isGameOn = true;
+        field.setCurrentPlayer(Field.getFirstSymbol());
+        startButton.setText("Restart");
+        settingsButton.setEnabled(false);
+        field.clearField();
+        updateCellLabels();
+    }
+
+    public void updateCellLabels()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                cellLabels[i][j].setText(field.getCellArray()[i][j].toString());
+            }
+        }
+    }
+
+    public void turn(int x, int y)
+    {
+
+        Character winner;
+
+        playerTurn(x, y);
+        winner = field.checkWinner();
+
+        if (winner != '0' && bot.getDifficulty() != 4)
+        {
+            setGameOff();
+            end(winner);
+            return;
+        }
+
+        if (field.getCurrentPlayer() == bot.getSymbol() && bot.isOn() && isGameOn())
+        {
+            botTurn();
+        }
+        winner = field.checkWinner();
+
+        if (winner != '0')
+        {
+            setGameOff();
+            end(winner);
+        }
+    }
+
+    public void playerTurn(int x, int y)
+    {
+        try
+        {
+            field.fillCell(new Integer[]{x, y});
+            cellLabels[x][y].setText(field.getCurrentPlayer().toString());
+            cellLabels[x][y].update(cellLabels[x][y].getGraphics());
+            field.changePlayer();
+        }
+        catch (Exception err){System.out.println(err.getMessage()); }
+
+
+    }
+
+    public void botTurn()
+    {
+        try
+        {
+            field.fillCell(bot.turn());
+            Thread.sleep(400);
+            updateCellLabels();
+            field.changePlayer();
+        }
+        catch (Exception err) { System.out.println(err.getMessage()); }
+
+    }
+
+    public void end(Character winner)
+    {
+        System.out.println("The winner is " + winner);
     }
 
 }

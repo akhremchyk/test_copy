@@ -8,7 +8,6 @@ import java.awt.event.MouseListener;
 public class CellLabel extends JLabel implements MouseListener {
 
     Field field = Main.getField();
-    Bot bot = Main.getBot();
     int x;
     int y;
 
@@ -28,15 +27,11 @@ public class CellLabel extends JLabel implements MouseListener {
     @Override
     public void mouseClicked(MouseEvent e)
     {
-        this.setText("X");
-        if (field.getCurrentPlayer() != bot.getSymbol())
+        if (Main.getGui().isGameOn())
         {
-            if (field.getCellArray()[this.x][this.y] == ' ')
-            {
-//                try{field.fillCell(new Integer[]{this.x, this.y});}
-//                catch (Exception err){}
-            }
+            Main.getGui().turn(this.x, this.y);
         }
+
     }
 
     @Override
