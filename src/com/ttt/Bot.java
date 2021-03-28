@@ -8,7 +8,7 @@ public class Bot {
     private Character symbol = Field.getSecondSymbol();
     private boolean isOn; // indicates whether the bot is turned on or not
     private final Field field = Main.getField();
-    private int difficulty = 3;
+    private int difficulty = 4;
 
 
 
@@ -58,7 +58,7 @@ public class Bot {
 
     private Integer[] hardDifficulty()
     {
-        // Minimax algorithm using alpha-beta pruning
+        // Minimax algorithm with alpha-beta pruning
 
         Integer[] bestMove = {0, 0};
         double bestScore = Double.NEGATIVE_INFINITY;

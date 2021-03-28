@@ -1,5 +1,7 @@
 package com.ttt;
 
+import com.ttt.GUI.Gui;
+
 public class Main {
 
     private static final Field field = new Field();
@@ -29,8 +31,16 @@ public class Main {
         }
         else {
             gui = new Gui();
-//            startGame();
+//            for(;;)
+//            {
+//                if (gui.isGameOn())
+//                {
+//                    gui.startGame();
+//                }
+//            }
         }
+
+
 
     }
 
@@ -43,7 +53,7 @@ public class Main {
         return field;
     }
 
-    public static boolean isIsBotsSymbolRandom(){return isBotsSymbolRandom;}
+    public static boolean isBotsSymbolRandom(){return isBotsSymbolRandom;}
 
     public static void setIsBotsSymbolRandom(boolean state){isBotsSymbolRandom = state;}
 

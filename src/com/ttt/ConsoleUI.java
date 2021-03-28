@@ -73,7 +73,7 @@ public class ConsoleUI
     private static void game()
     {
 
-        if (Main.isIsBotsSymbolRandom())
+        if (Main.isBotsSymbolRandom())
         {
             Random rand = new Random();
             int symbolNumber = rand.nextInt(2)+1;

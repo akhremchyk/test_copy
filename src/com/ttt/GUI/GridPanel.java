@@ -1,4 +1,4 @@
-package com.ttt;
+package com.ttt.GUI;
 
 import javax.swing.*;
 import java.awt.*;

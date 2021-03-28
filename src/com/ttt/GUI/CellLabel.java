@@ -1,4 +1,7 @@
-package com.ttt;
+package com.ttt.GUI;
+
+import com.ttt.Field;
+import com.ttt.Main;
 
 import javax.swing.*;
 import java.awt.*;

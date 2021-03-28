@@ -166,6 +166,19 @@ public class Field implements Cloneable{
             return '0';
     }
 
+    public void initialFillGui()
+    {
+        cell[0][0] = 'T';
+        cell[0][1] = 'I';
+        cell[0][2] = 'C';
+        cell[1][0] = 'T';
+        cell[1][1] = 'A';
+        cell[1][2] = 'C';
+        cell[2][0] = 'T';
+        cell[2][1] = 'O';
+        cell[2][2] = 'E';
+    }
+
     public void setCurrentPlayer(Character input)
     {
         currentPlayer = input;
