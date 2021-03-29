@@ -10,8 +10,6 @@ public class Bot {
     private final Field field = Main.getField();
     private int difficulty = 4;
 
-
-
     public Integer[] turn()
     {
         if (difficulty == 1)
