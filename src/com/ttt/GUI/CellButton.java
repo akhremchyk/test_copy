@@ -5,53 +5,38 @@ import com.ttt.Main;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class CellLabel extends JLabel implements MouseListener {
+public class CellButton extends JButton implements ActionListener {
 
     Field field = Main.getField();
     int x;
     int y;
 
-    public CellLabel(int x, int y)
+    public CellButton(int x, int y)
     {
         this.x = x;
         this.y = y;
         this.setHorizontalAlignment(JLabel.CENTER);
         this.setVerticalAlignment(JLabel.CENTER);
-        this.setForeground(Color.white);
+        this.setForeground(Color.WHITE);
+        this.setFocusable(false);
+        this.setOpaque(false);
+        this.setContentAreaFilled(false);
+        this.setBorderPainted(false);
         this.setFont(new Font("Comic Sans MS", Font.PLAIN, 100));
         this.setText(field.getCellArray()[this.x][this.y].toString());
-        this.addMouseListener(this);
-
+        this.addActionListener(this);
     }
 
+
     @Override
-    public void mouseClicked(MouseEvent e)
+    public void actionPerformed(ActionEvent e)
     {
         if (Main.getGui().isGameOn())
         {
             Main.getGui().turn(this.x, this.y);
         }
-
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
     }
 }
