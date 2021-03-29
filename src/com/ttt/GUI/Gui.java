@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Random;
 
 // I'm not proud of this GUI
 
@@ -16,34 +17,46 @@ public class Gui extends JFrame implements ActionListener {
 
     private final Field field = Main.getField();
     private final Bot bot = Main.getBot();
-    private final CellLabel[][] cellLabels= new CellLabel[3][3];
+    private final CellLabel[][] cellLabels = new CellLabel[3][3];
     private boolean isGameOn = false;
 
-    private final JPanel mainPanel; // The whole first game screen with two panels (gridPanel, buttonsPanel)
+    private final JPanel mainPanel; // The whole first game screen with three panels
+                                    // (labelPanel, gridPanel, buttonsPanel)
+
+    private final JPanel labelPanel; // Panel with main label
+    private final JLabel mainLabel;
+
     private final GridPanel gridPanel; // Panel with grid
+
     private final JPanel buttonsPanel; // Panel with buttons
     private final JButton settingsButton;
     private final JButton startButton;
 
     private final JPanel settingsPanel;
     private final JButton okButton;
+
     private final JLabel difficultyLabel;
-    private final JLabel symbolLabel;
     private final JRadioButton[] diffRButton;
-    private final JRadioButton[] symRButton;
     private final ButtonGroup diffGroup;
+
+    private final JLabel symbolLabel;
+    private final JRadioButton[] symRButton;
     private final ButtonGroup symGroup;
+
+    private final JLabel modeLabel;
+    private final JRadioButton[] modeRButton;
+    private final ButtonGroup modeGroup;
 
     public Gui()
     {
 
-        field.initialFillGui();
+        field.initialFillGui(); // Writes TIC TAC TOE
 
         //Set up the main window
         this.setTitle("Tic-tac-toe XO");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
-        this.setSize(420,520);
+        this.setSize(420,540);
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         this.getContentPane().setBackground(Color.BLACK);
@@ -51,7 +64,22 @@ public class Gui extends JFrame implements ActionListener {
         //Set up the main panel
         mainPanel = new JPanel();
         this.add(mainPanel);
+        mainPanel.setBackground(Color.BLACK);
         mainPanel.setLayout(new BorderLayout());
+
+        //Set up the label panel
+        labelPanel = new JPanel();
+        mainPanel.add(labelPanel, BorderLayout.NORTH);
+        labelPanel.setBackground(Color.BLACK);
+
+        //Set up the main label
+        mainLabel = new JLabel("Made by Sttrom");
+        mainLabel.setHorizontalAlignment(JLabel.CENTER);
+        mainLabel.setVerticalAlignment(JLabel.CENTER);
+        mainLabel.setForeground(Color.white);
+        mainLabel.setPreferredSize(new Dimension(400,57));
+        mainLabel.setFont(new Font("Bookman Old Style", Font.PLAIN, 40));
+        labelPanel.add(mainLabel);
 
         //Set up the grid panel
         gridPanel = new GridPanel();
@@ -60,10 +88,11 @@ public class Gui extends JFrame implements ActionListener {
         gridPanel.setBackground(Color.BLACK);
         initCellLabels();
 
-//        Set up the buttons panel
+        //Set up the buttons panel
         buttonsPanel = new JPanel();
         mainPanel.add(buttonsPanel, BorderLayout.SOUTH);
         buttonsPanel.setBackground(Color.BLACK);
+        buttonsPanel.setPreferredSize(new Dimension(420, 50));
 
         //Set up the buttons
         startButton = new JButton("Play!");
@@ -75,17 +104,12 @@ public class Gui extends JFrame implements ActionListener {
 
         settingsButton = new JButton();
         buttonsPanel.add(settingsButton);
+        ImageIcon icon = new ImageIcon(getClass().getResource("/images/gear.png"));
+        settingsButton.setIcon(icon);
         settingsButton.addActionListener(this);
         settingsButton.setBackground(Color.WHITE);
         settingsButton.setPreferredSize(new Dimension(30,30));
         settingsButton.setFocusable(false);
-        try {
-            Image img = ImageIO.read(getClass().getResource("images/gear_s.png"));
-            settingsButton.setIcon(new ImageIcon(img)); // FIXME
-        } catch (Exception ex)
-        {
-            System.out.println(ex.getMessage());
-        }
         settingsButton.setVisible(true);
 
         //Set up the settings panel
@@ -101,10 +125,41 @@ public class Gui extends JFrame implements ActionListener {
         settingsPanel.add(okButton, BorderLayout.SOUTH);
         okButton.setBackground(Color.WHITE);
         okButton.setBounds(settingsPanel.getWidth() / 2 - 50,
-                settingsPanel.getHeight() - 35, 100, 30);
+                settingsPanel.getHeight() - 45, 100, 30);
         okButton.setPreferredSize(new Dimension(100,30));
         okButton.setFocusable(false);
         okButton.addActionListener(this);
+
+        //Set up the mode label
+        modeLabel = new JLabel("Game mode");
+        settingsPanel.add(modeLabel);
+        modeLabel.setHorizontalAlignment(JLabel.CENTER);
+        modeLabel.setVerticalAlignment(JLabel.CENTER);
+        modeLabel.setForeground(Color.white);
+        modeLabel.setFont(new Font("Bookman Old Style", Font.PLAIN, 55));
+        modeLabel.setBounds(settingsPanel.getWidth() / 2 - 200,15,400,50);
+
+        //Set up the mode radio buttons
+        modeRButton = new JRadioButton[2];
+        modeGroup = new ButtonGroup();
+        for (int i = 0; i < 2; i++ )
+        {
+            modeRButton[i] = new JRadioButton();
+            modeRButton[i].setOpaque(false);
+            modeRButton[i].setForeground(Color.white);
+            modeRButton[i].setFont(new Font("Bookman Old Style", Font.PLAIN, 25));
+            modeRButton[i].setBounds(15,modeLabel.getY() + 55 + 30 * i,300,30);
+            modeRButton[i].setFocusable(false);
+            modeRButton[i].addActionListener(this);
+            modeGroup.add(modeRButton[i]);
+            settingsPanel.add(modeRButton[i]);
+        }
+        if (bot.isOn())
+            modeRButton[0].setSelected(true);
+        else
+            modeRButton[1].setSelected(true);
+        modeRButton[0].setText("Player vs Computer");
+        modeRButton[1].setText("Player vs Player");
 
         //Set up the difficulty label
         difficultyLabel = new JLabel("Bot's difficulty");
@@ -113,7 +168,8 @@ public class Gui extends JFrame implements ActionListener {
         difficultyLabel.setVerticalAlignment(JLabel.CENTER);
         difficultyLabel.setForeground(Color.white);
         difficultyLabel.setFont(new Font("Bookman Old Style", Font.PLAIN, 45));
-        difficultyLabel.setBounds(settingsPanel.getWidth() / 2 - 200,30,400,50);
+        difficultyLabel.setBounds(settingsPanel.getWidth() / 2 - 200,
+                modeRButton[1].getY() + 35,400,50);
 
         //Set up the difficulty radio buttons
         diffRButton = new JRadioButton[4];
@@ -124,7 +180,7 @@ public class Gui extends JFrame implements ActionListener {
             diffRButton[i].setOpaque(false);
             diffRButton[i].setForeground(Color.white);
             diffRButton[i].setFont(new Font("Bookman Old Style", Font.PLAIN, 25));
-            diffRButton[i].setBounds(15,90 + 30 * i,300,30);
+            diffRButton[i].setBounds(15,difficultyLabel.getY() + 50 + 30 * i,300,30);
             diffRButton[i].setFocusable(false);
             diffRButton[i].addActionListener(this);
             diffGroup.add(diffRButton[i]);
@@ -144,9 +200,9 @@ public class Gui extends JFrame implements ActionListener {
         symbolLabel.setVerticalAlignment(JLabel.CENTER);
         symbolLabel.setForeground(Color.white);
         symbolLabel.setFont(new Font("Bookman Old Style", Font.PLAIN, 40));
-        symbolLabel.setBounds(settingsPanel.getWidth() / 2 - 150,220,300,50);
+        symbolLabel.setBounds(settingsPanel.getWidth() / 2 - 150,diffRButton[3].getY() + 30,300,50);
 
-        //Set up the difficulty radio buttons
+        //Set up the symbol radio buttons
         symRButton = new JRadioButton[3];
         symGroup = new ButtonGroup();
         for (int i = 0; i < 3; i++ )
@@ -155,7 +211,7 @@ public class Gui extends JFrame implements ActionListener {
             symRButton[i].setOpaque(false);
             symRButton[i].setForeground(Color.white);
             symRButton[i].setFont(new Font("Bookman Old Style", Font.PLAIN, 25));
-            symRButton[i].setBounds(15,280 + 30 * i,300,30);
+            symRButton[i].setBounds(15,symbolLabel.getY() + 50 + 30 * i,300,30);
             symRButton[i].setFocusable(false);
             symRButton[i].addActionListener(this);
             symGroup.add(symRButton[i]);
@@ -199,8 +255,20 @@ public class Gui extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == startButton)
         {
-            startGame();
-//            isGameOn = true;
+            if (!isGameOn())
+            {
+                resetCellColors();
+                startGame();
+            }
+            else
+            {
+                setGameOff();
+                field.initialFillGui();
+                updateCellLabels();
+                mainLabel.setText("Made by Sttrom");
+                startButton.setText("Play!");
+                settingsButton.setEnabled(true);
+            }
         }
         else if (e.getSource() == settingsButton)
         {
@@ -226,6 +294,13 @@ public class Gui extends JFrame implements ActionListener {
         {
             Main.setIsBotsSymbolRandom(true);
         }
+        else if (e.getSource() == modeRButton[0])
+        {
+            bot.setState(true);
+        }else if (e.getSource() == modeRButton[1])
+        {
+            bot.setState(false);
+        }
         else
         {
             for (int i = 0; i < 4; i++)
@@ -241,6 +316,7 @@ public class Gui extends JFrame implements ActionListener {
             }
         }
 
+
     }
 
     public boolean isGameOn()
@@ -252,18 +328,40 @@ public class Gui extends JFrame implements ActionListener {
 
     public void startGame()
     {
-        bot.setState(true);
         isGameOn = true;
         field.setCurrentPlayer(Field.getFirstSymbol());
-        startButton.setText("Restart");
+        startButton.setText("End game");
         settingsButton.setEnabled(false);
         field.clearField();
         updateCellLabels();
+        if (!bot.isOn())
+        {
+            mainLabel.setText("Player " + field.getCurrentPlayer() + "'s turn");
+        }
+        else
+        {
+            mainLabel.setText("You vs Bot");
+        }
+        if (Main.isBotsSymbolRandom())  // Chooses bot's symbol if it should be chosen randomly every game
+        {
+            Random rand = new Random();
+            int symbolNumber = rand.nextInt(2)+1;
+            if (symbolNumber == 1)
+            {
+                bot.setSymbol(Field.getFirstSymbol());
+                mainLabel.setText("Bot goes first");
+            }
+            else
+            {
+                bot.setSymbol(Field.getSecondSymbol());
+                mainLabel.setText("You go first");
+            }
+        }
         this.update(this.getGraphics());
         botTurn();
     }
 
-    public void updateCellLabels()
+    public void updateCellLabels() // Sets GUI cellLabels' Text according to the actual field state
     {
         for (int i = 0; i < 3; i++)
         {
@@ -278,6 +376,9 @@ public class Gui extends JFrame implements ActionListener {
     {
 
         Character winner = '0';
+
+        if (bot.isOn())
+            mainLabel.setText("You vs Bot");
 
         if (field.getCurrentPlayer() != bot.getSymbol() || !bot.isOn()) {
             playerTurn(x, y);
@@ -312,9 +413,12 @@ public class Gui extends JFrame implements ActionListener {
             cellLabels[x][y].setText(field.getCurrentPlayer().toString());
             cellLabels[x][y].update(cellLabels[x][y].getGraphics());
             field.changePlayer();
+            if (!bot.isOn())
+            {
+                mainLabel.setText("Player " + field.getCurrentPlayer() + "'s turn");
+            }
         }
         catch (Exception err){System.out.println(err.getMessage()); }
-
 
     }
 
@@ -332,15 +436,47 @@ public class Gui extends JFrame implements ActionListener {
                 updateCellLabels();
                 field.changePlayer();
             }
-            catch (Exception e) { e.getMessage(); }
+            catch (Exception e) { }
         }
     }
 
     public void end(Character winner)
     {
         settingsButton.setEnabled(true);
-        System.out.println("The winner is " + winner);
-        startButton.setText("Play!");
+        if (winner == ' ')
+        {
+            mainLabel.setText("Draw!");
+        }
+        else
+            {
+            if (!bot.isOn())
+                mainLabel.setText("The winner is " + winner + "!");
+            else
+            {
+                if (winner == bot.getSymbol())
+                    mainLabel.setText("Bot won!");
+                else
+                    mainLabel.setText("You won!");
+            }
+                Integer[][] winningCombination = field.getWinningCombination();
+                for(int i = 0; i < 3; i++)
+                {
+                    cellLabels[winningCombination[i][0]][winningCombination[i][1]].setForeground(Color.RED);
+                }
+        }
+
+        startButton.setText("Restart!");
+    }
+
+    public void resetCellColors()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                cellLabels[i][j].setForeground(Color.WHITE);
+            }
+        }
     }
 
 }

@@ -31,13 +31,6 @@ public class Main {
         }
         else {
             gui = new Gui();
-//            for(;;)
-//            {
-//                if (gui.isGameOn())
-//                {
-//                    gui.startGame();
-//                }
-//            }
         }
 
 

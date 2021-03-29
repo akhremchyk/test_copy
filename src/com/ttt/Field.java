@@ -3,13 +3,16 @@ package com.ttt;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Field implements Cloneable{
+public class Field
+{
 
     private final Character[][] cell = new Character[3][3];
     private final HashMap<Integer, Integer[]> cellNumbers = new HashMap<>();
     private static final Character playerSymbol1 = 'X';
     private static final Character playerSymbol2 = 'O';
     private Character currentPlayer = playerSymbol1;
+    private Integer[][] winningCombination = new Integer[3][2];  // Coordinates of cells in winning combination.
+                                                            // Needed to highlight them in GUI.
 
     public Field() {
         initialFill();
@@ -144,26 +147,82 @@ public class Field implements Cloneable{
             ArrayList<Character> row = getRow(i);
             if ((row.get(0) == row.get(1)) && (row.get(1) == row.get(2))
                     && row.get(0) != ' ')
+            {
+                setWinningCombination('r', i);
                 return row.get(0);
+            }
         }
         for (int i = 0; i < 3; i++)
         {
             ArrayList<Character> column = getColumn(i);
             if ((column.get(0) == column.get(1)) && (column.get(1) == column.get(2))
                     && column.get(0) != ' ')
+            {
+                setWinningCombination('c', i);
                 return column.get(0);
+            }
         }
         for (int i = 0; i < 2; i++)
         {
             ArrayList<Character> diagonal = getDiagonal(i);
             if ((diagonal.get(0) == diagonal.get(1)) && (diagonal.get(1) == diagonal.get(2))
                     && diagonal.get(0) != ' ')
+            {
+                setWinningCombination('d', i);
                 return diagonal.get(0);
+            }
         }
         if (isFull())
             return ' ';
         else
             return '0';
+    }
+
+    public void setWinningCombination(char line, int number)
+    {
+        // char line - indicator for whether row(r), column(c) or diagonal(d) won
+        // int number - its number
+        if (line == 'r')
+        {
+            for(int i = 0; i < 3; i++)
+            {
+                winningCombination[i][0] = number;
+                winningCombination[i][1] = i;
+            }
+        }
+        else if (line == 'c')
+        {
+            for(int i = 0; i < 3; i++)
+            {
+                winningCombination[i][0] = i;
+                winningCombination[i][1] = number;
+            }
+        }
+        else if (line == 'd')
+        {
+            for(int i = 0; i < 3; i++)
+            {
+                if (number == 0)
+                {
+                    winningCombination[i][0] = i;
+                    winningCombination[i][1] = i;
+                }
+                else
+                {
+                    winningCombination[i][0] = i;
+                    winningCombination[i][1] = 2 - i;
+                }
+            }
+        }
+        else
+        {
+            winningCombination = null;
+        }
+    }
+
+    public Integer[][] getWinningCombination()
+    {
+        return winningCombination;
     }
 
     public void initialFillGui()

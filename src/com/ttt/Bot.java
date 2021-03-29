@@ -6,7 +6,7 @@ import java.util.Random;
 public class Bot {
 
     private Character symbol = Field.getSecondSymbol();
-    private boolean isOn; // indicates whether the bot is turned on or not
+    private boolean isOn = true; // indicates whether the bot is turned on or not
     private final Field field = Main.getField();
     private int difficulty = 4;
 

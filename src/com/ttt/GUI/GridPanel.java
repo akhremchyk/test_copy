@@ -17,8 +17,8 @@ public class GridPanel extends JPanel {
 
         graphics2D.setColor(Color.white);
         graphics2D.setStroke(new BasicStroke(5));
-        graphics2D.drawLine(this.getWidth()/3, 15, this.getWidth()/3, this.getHeight()-15);
-        graphics2D.drawLine(this.getWidth()/3*2, 15, this.getWidth()/3*2, this.getHeight()-15);
+        graphics2D.drawLine(this.getWidth()/3, 10, this.getWidth()/3, this.getHeight()-10);
+        graphics2D.drawLine(this.getWidth()/3*2, 10, this.getWidth()/3*2, this.getHeight()-10);
         graphics2D.drawLine(15, this.getHeight()/3, this.getWidth()-15, this.getHeight()/3);
         graphics2D.drawLine(15, this.getHeight()/3*2, this.getWidth()-15, this.getHeight()/3*2);
     }
