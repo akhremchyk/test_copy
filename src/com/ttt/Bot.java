@@ -5,10 +5,10 @@ import java.util.Random;
 
 public class Bot {
 
-    private Character symbol;
-    private boolean isOn; // indicates whether the bot is working or not
+    private Character symbol = Field.getSecondSymbol();
+    private boolean isOn = true; // indicates whether the bot is turned on or not
     private final Field field = Main.getField();
-    private int difficulty = 3;
+    private int difficulty = 4;
 
 
 
@@ -58,7 +58,7 @@ public class Bot {
 
     private Integer[] hardDifficulty()
     {
-        // Minimax algorithm using alpha-beta pruning
+        // Minimax algorithm with alpha-beta pruning
 
         Integer[] bestMove = {0, 0};
         double bestScore = Double.NEGATIVE_INFINITY;
@@ -100,7 +100,7 @@ public class Bot {
     {
         // Bot scans for lines with two identical symbols and fills the third cell.
         // If there are two bot's symbols it fills the third cell regardless of whether it's empty or not.
-        // If there are none such cells, it just fills a random cell.
+        // If there are none such cells, it fills cell using minimax algorithm.
 
         Integer[] botCell;
 
@@ -117,8 +117,7 @@ public class Bot {
             return  botCell;
         }
         else {
-            Random rand = new Random();
-            return field.cellNumToCoord(rand.nextInt(9) + 1);
+            return hardDifficulty();
         }
     }
 
@@ -393,5 +392,7 @@ public class Bot {
     {
         this.isOn = state;
     }
+
+    public int getDifficulty() { return difficulty; }
 
 }

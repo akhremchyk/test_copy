@@ -3,13 +3,16 @@ package com.ttt;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Field implements Cloneable{
+public class Field
+{
 
-    private final char[][] cell = new char[3][3];
+    private final Character[][] cell = new Character[3][3];
     private final HashMap<Integer, Integer[]> cellNumbers = new HashMap<>();
     private static final Character playerSymbol1 = 'X';
     private static final Character playerSymbol2 = 'O';
     private Character currentPlayer = playerSymbol1;
+    private Integer[][] winningCombination = new Integer[3][2];  // Coordinates of cells in winning combination.
+                                                            // Needed to highlight them in GUI.
 
     public Field() {
         initialFill();
@@ -144,21 +147,30 @@ public class Field implements Cloneable{
             ArrayList<Character> row = getRow(i);
             if ((row.get(0) == row.get(1)) && (row.get(1) == row.get(2))
                     && row.get(0) != ' ')
+            {
+                setWinningCombination('r', i);
                 return row.get(0);
+            }
         }
         for (int i = 0; i < 3; i++)
         {
             ArrayList<Character> column = getColumn(i);
             if ((column.get(0) == column.get(1)) && (column.get(1) == column.get(2))
                     && column.get(0) != ' ')
+            {
+                setWinningCombination('c', i);
                 return column.get(0);
+            }
         }
         for (int i = 0; i < 2; i++)
         {
             ArrayList<Character> diagonal = getDiagonal(i);
             if ((diagonal.get(0) == diagonal.get(1)) && (diagonal.get(1) == diagonal.get(2))
                     && diagonal.get(0) != ' ')
+            {
+                setWinningCombination('d', i);
                 return diagonal.get(0);
+            }
         }
         if (isFull())
             return ' ';
@@ -166,17 +178,77 @@ public class Field implements Cloneable{
             return '0';
     }
 
+    public void setWinningCombination(char line, int number)
+    {
+        // char line - indicator for whether row(r), column(c) or diagonal(d) won
+        // int number - its number
+        if (line == 'r')
+        {
+            for(int i = 0; i < 3; i++)
+            {
+                winningCombination[i][0] = number;
+                winningCombination[i][1] = i;
+            }
+        }
+        else if (line == 'c')
+        {
+            for(int i = 0; i < 3; i++)
+            {
+                winningCombination[i][0] = i;
+                winningCombination[i][1] = number;
+            }
+        }
+        else if (line == 'd')
+        {
+            for(int i = 0; i < 3; i++)
+            {
+                if (number == 0)
+                {
+                    winningCombination[i][0] = i;
+                    winningCombination[i][1] = i;
+                }
+                else
+                {
+                    winningCombination[i][0] = i;
+                    winningCombination[i][1] = 2 - i;
+                }
+            }
+        }
+        else
+        {
+            winningCombination = null;
+        }
+    }
+
+    public Integer[][] getWinningCombination()
+    {
+        return winningCombination;
+    }
+
+    public void initialFillGui()
+    {
+        cell[0][0] = 'T';
+        cell[0][1] = 'I';
+        cell[0][2] = 'C';
+        cell[1][0] = 'T';
+        cell[1][1] = 'A';
+        cell[1][2] = 'C';
+        cell[2][0] = 'T';
+        cell[2][1] = 'O';
+        cell[2][2] = 'E';
+    }
+
     public void setCurrentPlayer(Character input)
     {
         currentPlayer = input;
     }
 
-    public char getCurrentPlayer()
+    public Character getCurrentPlayer()
     {
         return currentPlayer;
     }
 
-    public char getOtherPlayer()
+    public Character getOtherPlayer()
     {
         if (currentPlayer == playerSymbol1)
             return playerSymbol2;
@@ -189,21 +261,26 @@ public class Field implements Cloneable{
         currentPlayer = getOtherPlayer();
     }
 
-    public static char getOtherSymbol(Character symbol){
+    public static Character getOtherSymbol(Character symbol){
         if (symbol == playerSymbol1)
             return playerSymbol2;
         else
             return playerSymbol1;
     }
 
-    public static char getFirstSymbol()
+    public static Character getFirstSymbol()
     {
         return playerSymbol1;
     }
 
-    public static char getSecondSymbol()
+    public static Character getSecondSymbol()
     {
         return playerSymbol2;
+    }
+
+    public Character[][] getCellArray()
+    {
+        return cell;
     }
 
 }
