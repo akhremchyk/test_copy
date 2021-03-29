@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.util.Random;
 
 // I'm not proud of this GUI
@@ -42,6 +43,9 @@ public class Gui extends JFrame implements ActionListener {
         field.initialFillGui(); // Writes TIC TAC TOE
 
         //Set up the main window
+        URL iconURL = getClass().getResource("/images/logo.png");
+        ImageIcon icon = new ImageIcon(iconURL);
+        this.setIconImage(icon.getImage());
         this.setTitle("Tic-tac-toe XO");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
@@ -93,8 +97,8 @@ public class Gui extends JFrame implements ActionListener {
 
         settingsButton = new JButton();
         buttonsPanel.add(settingsButton);
-        ImageIcon icon = new ImageIcon(getClass().getResource("/images/gear.png"));
-        settingsButton.setIcon(icon);
+        ImageIcon settingsIcon = new ImageIcon(getClass().getResource("/images/gear.png"));
+        settingsButton.setIcon(settingsIcon);
         settingsButton.addActionListener(this);
         settingsButton.setBackground(Color.WHITE);
         settingsButton.setPreferredSize(new Dimension(30,30));
@@ -400,12 +404,12 @@ public class Gui extends JFrame implements ActionListener {
             CellButtons[x][y].setText(field.getCurrentPlayer().toString());
             CellButtons[x][y].update(CellButtons[x][y].getGraphics());
             field.changePlayer();
-            if (!bot.isOn())
-            {
-                mainLabel.setText("Player " + field.getCurrentPlayer() + "'s turn");
-            }
         }
-        catch (Exception err){System.out.println(err.getMessage()); }
+        catch (Exception err){ return; }
+        if (!bot.isOn())
+        {
+            mainLabel.setText("Player " + field.getCurrentPlayer() + "'s turn");
+        }
 
     }
 
