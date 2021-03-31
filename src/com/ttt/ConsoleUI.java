@@ -1,5 +1,6 @@
 package com.ttt;
 
+import java.io.IOException;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -23,8 +24,7 @@ public class ConsoleUI
 
     public static boolean menu() {
 
-//        TODO cls
-
+        clearScreen();
         field.initialFill();
         field.printField();
         field.setCurrentPlayer(Field.getFirstSymbol());
@@ -45,6 +45,7 @@ public class ConsoleUI
                 }
                 else if (sw == 2) {
                     botSettings();
+                    clearScreen();
                     field.printField();
                     System.out.println("1. Play");
                     System.out.println("2. Bot's settings");
@@ -82,6 +83,8 @@ public class ConsoleUI
                 bot.setSymbol(Field.getSecondSymbol());
         }
 
+        clearScreen();
+        field.printField();
         System.out.println("1. Player vs Computer");
         System.out.println("2. Player vs Player");
 
@@ -105,6 +108,7 @@ public class ConsoleUI
             }
         }
 
+        clearScreen();
         field.initialFill();
         field.printField();
         System.out.println("Player " + field.getCurrentPlayer() + "'s turn\n");
@@ -114,20 +118,32 @@ public class ConsoleUI
         for(;;)
         {
             turn();
+            clearScreen();
             field.printField();
+            field.changePlayer();
             winner = field.checkWinner();
-            if (winner != '0')
+
+            if (winner != '0' && ((bot.getDifficulty() != 4) || (!bot.isOn())))
             {
                 break;
             }
+            else if (winner == bot.getSymbol() && bot.getDifficulty() == 4 && bot.isOn())
+            {
+                break;
+            }
+            else
+            {
+                System.out.println("Player " + field.getCurrentPlayer() + "'s turn\n");
+            }
 
-            field.changePlayer();
         }
         end(winner);
     }
 
     private static void botSettings() {
 
+        clearScreen();
+        field.printField();
         System.out.println("1. Bot's difficulty");
         System.out.println("2. Bot's symbol");
 
@@ -158,6 +174,8 @@ public class ConsoleUI
 
     private static void chooseBotsDifficulty() {
 
+        clearScreen();
+        field.printField();
         System.out.println("1. Easy");
         System.out.println("2. Medium");
         System.out.println("3. Hard");
@@ -178,6 +196,8 @@ public class ConsoleUI
 
     private static void chooseBotsSymbol()
     {
+        clearScreen();
+        field.printField();
         System.out.println("1. Always " + Field.getSecondSymbol());
         System.out.println("2. Always " + Field.getFirstSymbol());
         System.out.println("3. Random every time");
@@ -217,8 +237,16 @@ public class ConsoleUI
         }
         else
         {
-            System.out.println("Player " + winner + " won!");
+            System.out.println("Player " + winner + " won!\n");
         }
+
+        // In the end of the game something is left in input stream
+        // So it should be cleaned at first and then it can wait for user's input
+        // Or pause() just doesn't work
+        // *Костыль*
+        scan.nextLine();
+        pause();
+
     }
 
     private static void turn() {
@@ -228,7 +256,6 @@ public class ConsoleUI
             try
             {
                 if (bot.isOn() && field.getCurrentPlayer() == bot.getSymbol()){
-                    Thread.sleep(300);
                     field.fillCell(bot.turn());
                 }
                 else {
@@ -259,6 +286,29 @@ public class ConsoleUI
             scan.nextLine();
             return 0;
         }
+    }
+
+    public static void clearScreen()
+    {
+        final String os = System.getProperty("os.name");
+        if (os.contains("Windows")) {
+            try {
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            System.out.print("\033[H\033[2J");
+            System.out.flush();
+        }
+    }
+
+    public static void pause()
+    {
+        System.out.println("Press enter to continue");
+        scan.nextLine();
     }
 
 }
