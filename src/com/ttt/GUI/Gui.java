@@ -415,11 +415,6 @@ public class Gui extends JFrame implements ActionListener {
 
     public void botTurn()
     {
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         while(field.getCurrentPlayer() == bot.getSymbol())
         {
             try {

@@ -12,6 +12,11 @@ public class Bot {
 
     public Integer[] turn()
     {
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         if (difficulty == 1)
             return easyDifficulty();
         else if (difficulty == 2)

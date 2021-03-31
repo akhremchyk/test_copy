@@ -12,21 +12,23 @@ public class Main {
 
     public static void main(String[] args) {
 
-        if (args.length > 0 && args[0].equals("-c"))
+        if (args.length > 0 && args[0].equals("-c"))//args.length > 0 && args[0].equals("-c")
         {
+            ConsoleUI.clearScreen();
             field.printField();
             System.out.println("To fill a cell enter its number\n");
-            while (ConsoleUI.menu()) {
-                try {
-                    Thread.sleep(1000);
-                } catch (Exception err) {
-                    System.out.println(err.getMessage());
+            ConsoleUI.pause();
+            while (true)
+            {
+                if (!ConsoleUI.menu())
+                {
+                    break;
                 }
             }
         }
         else if (args.length > 0)
         {
-            System.out.println("Unknown argument \"" + args[0] + "\"");
+            System.out.println("\nUnknown argument \"" + args[0] + "\"");
             System.out.println("Use \"-c\" to activate console interface");
         }
         else {
@@ -39,15 +41,12 @@ public class Main {
 
     public static Gui getGui() { return gui; }
 
-    public static Bot getBot(){return bot;}
+    public static Bot getBot(){ return bot; }
 
-    public static Field getField()
-    {
-        return field;
-    }
+    public static Field getField() { return field; }
 
-    public static boolean isBotsSymbolRandom(){return isBotsSymbolRandom;}
+    public static boolean isBotsSymbolRandom(){ return isBotsSymbolRandom; }
 
-    public static void setIsBotsSymbolRandom(boolean state){isBotsSymbolRandom = state;}
+    public static void setIsBotsSymbolRandom(boolean state){ isBotsSymbolRandom = state; }
 
 }
