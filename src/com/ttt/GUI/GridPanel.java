@@ -9,6 +9,7 @@ public class GridPanel extends JPanel {
 
     }
 
+    // Draws game grid
     public void paintComponent(Graphics g) {
         Graphics2D graphics2D = (Graphics2D)g;
 

@@ -11,6 +11,8 @@ import java.awt.event.ActionListener;
 public class CellButton extends JButton implements ActionListener {
 
     Field field = Main.getField();
+
+    // Cell's coordinates
     int x;
     int y;
 

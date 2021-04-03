@@ -11,13 +11,16 @@ public class Field
     private static final Character playerSymbol1 = 'X';
     private static final Character playerSymbol2 = 'O';
     private Character currentPlayer = playerSymbol1;
-    private Integer[][] winningCombination = new Integer[3][2];  // Coordinates of cells in winning combination.
-                                                            // Needed to highlight them in GUI.
+
+    // Coordinates of cells in winning combination.
+    // Needed to highlight them in GUI.
+    private Integer[][] winningCombination = new Integer[3][2];
+
 
     public Field() {
         initialFill();
 
-//        Initializing cellNumber HashMap
+        // Initializing cellNumber HashMap
         Integer number = 1;
         for (int i = 0; i < 3; i++)
         {
@@ -30,8 +33,6 @@ public class Field
         }
     }
 
-
-
     public void printField()
     {
         System.out.println(
@@ -42,8 +43,8 @@ public class Field
                                 "\t " + cell[2][0] + " | " + cell[2][1] + " | " + cell[2][2] + " \n");
     }
 
+    // Initial indication of cells' numbers
     public void initialFill() {
-//         initial indication of cells' numbers
         char cell_num = '1';
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 3; j++) {
@@ -114,7 +115,6 @@ public class Field
 
     public ArrayList<Character> getDiagonal(int diagonalNum)
     {
-        //
         ArrayList<Character> line = new ArrayList<>(3);
         for (int i = 0; i < 3; i++)
         {
@@ -126,6 +126,7 @@ public class Field
         return line;
     }
 
+    // Scans if there are any free cells
     public boolean isFull()
     {
         for (int i = 0; i < 3; i++)
@@ -139,9 +140,9 @@ public class Field
         return true;
     }
 
+    // Scans for winning combinations
     public Character checkWinner()
     {
-
         for (int i = 0; i < 3; i++)
         {
             ArrayList<Character> row = getRow(i);
@@ -178,6 +179,7 @@ public class Field
             return '0';
     }
 
+    // Sets winningCombination that is being used to highlight it in GUI
     public void setWinningCombination(char line, int number)
     {
         // char line - indicator for whether row(r), column(c) or diagonal(d) won

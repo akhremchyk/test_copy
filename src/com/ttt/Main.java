@@ -12,7 +12,9 @@ public class Main {
 
     public static void main(String[] args) {
 
-        if (args.length > 0 && args[0].equals("-c"))//args.length > 0 && args[0].equals("-c")
+        // By default the game opens with GUI
+        // But adding "-c" (console) flag activates console UI
+        if (args.length > 0 && args[0].equals("-c"))
         {
             ConsoleUI.clearScreen();
             field.printField();
