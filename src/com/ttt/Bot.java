@@ -5,15 +5,18 @@ import java.util.Random;
 
 public class Bot {
 
-    private Character symbol;
-    private boolean isOn; // indicates whether the bot is working or not
+    private Character symbol = Field.getSecondSymbol();
+    private boolean isOn = true; // indicates whether the bot is turned on or not
     private final Field field = Main.getField();
     private int difficulty = 3;
 
-
-
     public Integer[] turn()
     {
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         if (difficulty == 1)
             return easyDifficulty();
         else if (difficulty == 2)
@@ -22,7 +25,6 @@ public class Bot {
             return hardDifficulty();
         else
             return cheaterDifficulty();
-
     }
 
     private Integer[] easyDifficulty()
@@ -58,7 +60,7 @@ public class Bot {
 
     private Integer[] hardDifficulty()
     {
-        // Minimax algorithm using alpha-beta pruning
+        // Minimax algorithm with alpha-beta pruning
 
         Integer[] bestMove = {0, 0};
         double bestScore = Double.NEGATIVE_INFINITY;
@@ -100,7 +102,7 @@ public class Bot {
     {
         // Bot scans for lines with two identical symbols and fills the third cell.
         // If there are two bot's symbols it fills the third cell regardless of whether it's empty or not.
-        // If there are none such cells, it just fills a random cell.
+        // If there are none such cells, it fills cell using minimax algorithm.
 
         Integer[] botCell;
 
@@ -117,8 +119,7 @@ public class Bot {
             return  botCell;
         }
         else {
-            Random rand = new Random();
-            return field.cellNumToCoord(rand.nextInt(9) + 1);
+            return hardDifficulty();
         }
     }
 
@@ -180,9 +181,98 @@ public class Bot {
         return bestScore;
     }
 
+    private Integer[] scanForTwoAndClear(char soughtSymbol)
+    {
+        // Scans for a row with 2 identical symbols and a clear cell
+        ArrayList<Character> checkedLine;
+
+        for (int i = 0; i < 3; i++)
+        {
+            checkedLine = field.getRow(i);
+            if (!checkedLine.contains(Field.getOtherSymbol(soughtSymbol))
+                    && checkedLine.contains(soughtSymbol))
+            {
+                int symbolCtr = 0; // Counter to count how much sought symbols are there
+                int clearCellCoord = 0; // Coordinate of the clear cell
+                for (int j = 0; j < 3; j++)
+                {
+                    if (checkedLine.get(j) == soughtSymbol)
+                    {
+                        symbolCtr++;
+                    }
+                    else {
+                        clearCellCoord = j;
+                    }
+                }
+                if (symbolCtr == 2)
+                {
+                    // If there are 2 sought symbols, there is only 1 free cell
+                    return new Integer[]{i, clearCellCoord};
+                }
+            }
+        }
+
+        // Scans for a column with 2 identical symbols and a clear cell
+        for (int i = 0; i < 3; i++)
+        {
+            checkedLine = field.getColumn(i);
+            if (!checkedLine.contains(Field.getOtherSymbol(soughtSymbol))
+                    && checkedLine.contains(soughtSymbol))
+            {
+                int symbolCtr = 0; // Counter to count how much sought symbols are there
+                int clearCellCoord = 0; // Coordinate of the clear cell
+                for (int j = 0; j < 3; j++)
+                {
+                    if (checkedLine.get(j) == soughtSymbol)
+                    {
+                        symbolCtr++;
+                    }
+                    else {
+                        clearCellCoord = j;
+                    }
+                }
+                if (symbolCtr == 2)
+                {
+                    // If there are 2 sought symbols, there is only 1 free cell
+                    return new Integer[]{clearCellCoord, i};
+                }
+            }
+        }
+
+        // Scans for a diagonal with 2 identical symbols and a clear cell
+        for (int i = 0; i < 2; i++)
+        {
+            checkedLine = field.getDiagonal(i);
+            if (!checkedLine.contains(Field.getOtherSymbol(soughtSymbol))
+                    && checkedLine.contains(soughtSymbol))
+            {
+                int symbolCtr = 0; // Counter to count how much sought symbols are there
+                int clearCellCoord = 0; // Coordinate of the clear cell
+                for (int j = 0; j < 3; j++)
+                {
+                    if (checkedLine.get(j) == soughtSymbol)
+                    {
+                        symbolCtr++;
+                    }
+                    else {
+                        clearCellCoord = j;
+                    }
+                }
+                if (symbolCtr == 2) {
+                    // If there are 2 sought symbols, there is only 1 free cell
+                    if (i == 0)
+                        return new Integer[]{clearCellCoord, clearCellCoord};
+                    else
+                        return new Integer[]{clearCellCoord,2 - clearCellCoord};
+                }
+            }
+        }
+        return null;
+    }
+
     private Integer[] scanForTwo(char soughtSymbol)
     {
-//      scans for a row with 2 identical symbols
+        // Scans for a row with 2 identical symbols
         ArrayList<Character> checkedLine;
 
         for (int i = 0; i < 3; i++)
@@ -190,8 +280,8 @@ public class Bot {
             checkedLine = field.getRow(i);
             if (checkedLine.contains(soughtSymbol))
             {
-                int symbolCtr = 0; //counter to count how much sought symbols are there
-                int otherCellCoord = 0; //coordinate of a cell without the sought symbol
+                int symbolCtr = 0; // Counter to count how much sought symbols are there
+                int otherCellCoord = 0; // Coordinate of a cell without the sought symbol
                 for (int j = 0; j < 3; j++)
                 {
                     if (checkedLine.get(j) == soughtSymbol)
@@ -204,7 +294,7 @@ public class Bot {
                 }
                 if (symbolCtr == 2)
                 {
-                    // if there are 2 sought symbols, there is only 1 cell with the other symbol
+                    // If there are 2 sought symbols, there is only 1 cell with the other symbol
                     Integer[] soughtCell = new Integer[]{i, otherCellCoord};
                     field.clearCell(soughtCell);
                     return soughtCell;
@@ -212,14 +302,14 @@ public class Bot {
             }
         }
 
-        //scans for a column with 2 identical symbols
+        // Scans for a column with 2 identical symbols
         for (int i = 0; i < 3; i++)
         {
             checkedLine = field.getColumn(i);
             if (checkedLine.contains(soughtSymbol))
             {
-                int symbolCtr = 0; //counter to count how much sought symbols are there
-                int otherCellCoord = 0; //coordinate of the clear cell
+                int symbolCtr = 0; // Counter to count how much sought symbols are there
+                int otherCellCoord = 0; // Coordinate of the clear cell
                 for (int j = 0; j < 3; j++)
                 {
                     if (checkedLine.get(j) == soughtSymbol)
@@ -232,7 +322,7 @@ public class Bot {
                 }
                 if (symbolCtr == 2)
                 {
-                    // if there are 2 sought symbols, there is only 1 cell with the other symbol
+                    // If there are 2 sought symbols, there is only 1 cell with the other symbol
                     Integer[] soughtCell = new Integer[]{otherCellCoord, i};
                     field.clearCell(soughtCell);
                     return soughtCell;
@@ -240,14 +330,14 @@ public class Bot {
             }
         }
 
-        //scans for a diagonal with 2 identical symbols
+        // Scans for a diagonal with 2 identical symbols
         for (int i = 0; i < 2; i++)
         {
             checkedLine = field.getDiagonal(i);
             if (checkedLine.contains(soughtSymbol))
             {
-                int symbolCtr = 0; //counter to count how much sought symbols are there
-                int otherCellCoord = 0; //coordinate of the clear cell
+                int symbolCtr = 0; // Counter to count how much sought symbols are there
+                int otherCellCoord = 0; // Coordinate of the clear cell
                 for (int j = 0; j < 3; j++)
                 {
                     if (checkedLine.get(j) == soughtSymbol)
@@ -259,7 +349,7 @@ public class Bot {
                     }
                 }
                 if (symbolCtr == 2) {
-                    // if there are 2 sought symbols, there is only 1 free cell
+                    // If there are 2 sought symbols, there is only 1 free cell
                     Integer[] soughtCell;
                     if (i == 0) {
                         soughtCell = new Integer[]{otherCellCoord, otherCellCoord};
@@ -272,97 +362,6 @@ public class Bot {
                 }
             }
         }
-
-        return null;
-    }
-
-    private Integer[] scanForTwoAndClear(char soughtSymbol)
-    {
-//      scans for a row with 2 identical symbols and a clear cell
-        ArrayList<Character> checkedLine;
-
-        for (int i = 0; i < 3; i++)
-        {
-            checkedLine = field.getRow(i);
-            if (!checkedLine.contains(Field.getOtherSymbol(soughtSymbol))
-                    && checkedLine.contains(soughtSymbol))
-            {
-                int symbolCtr = 0; //counter to count how much sought symbols are there
-                int clearCellCoord = 0; //coordinate of the clear cell
-                for (int j = 0; j < 3; j++)
-                {
-                    if (checkedLine.get(j) == soughtSymbol)
-                    {
-                        symbolCtr++;
-                    }
-                    else {
-                        clearCellCoord = j;
-                    }
-                }
-                if (symbolCtr == 2)
-                {
-                    // if there are 2 sought symbols, there is only 1 free cell
-                    return new Integer[]{i, clearCellCoord};
-                }
-            }
-        }
-
-        //scans for a column with 2 identical symbols and a clear cell
-        for (int i = 0; i < 3; i++)
-        {
-            checkedLine = field.getColumn(i);
-            if (!checkedLine.contains(Field.getOtherSymbol(soughtSymbol))
-                    && checkedLine.contains(soughtSymbol))
-            {
-                int symbolCtr = 0; //counter to count how much sought symbols are there
-                int clearCellCoord = 0; //coordinate of the clear cell
-                for (int j = 0; j < 3; j++)
-                {
-                    if (checkedLine.get(j) == soughtSymbol)
-                    {
-                        symbolCtr++;
-                    }
-                    else {
-                        clearCellCoord = j;
-                    }
-                }
-                if (symbolCtr == 2)
-                {
-                    // if there are 2 sought symbols, there is only 1 free cell
-                    return new Integer[]{clearCellCoord, i};
-                }
-            }
-        }
-
-        //scans for a diagonal with 2 identical symbols and a clear cell
-        for (int i = 0; i < 2; i++)
-        {
-            checkedLine = field.getDiagonal(i);
-            if (!checkedLine.contains(Field.getOtherSymbol(soughtSymbol))
-                    && checkedLine.contains(soughtSymbol))
-            {
-                int symbolCtr = 0; //counter to count how much sought symbols are there
-                int clearCellCoord = 0; //coordinate of the clear cell
-                for (int j = 0; j < 3; j++)
-                {
-                    if (checkedLine.get(j) == soughtSymbol)
-                    {
-                        symbolCtr++;
-                    }
-                    else {
-                        clearCellCoord = j;
-                    }
-                }
-                if (symbolCtr == 2) {
-                    // if there are 2 sought symbols, there is only 1 free cell
-                    if (i == 0)
-                        return new Integer[]{clearCellCoord, clearCellCoord};
-                    else
-                        return new Integer[]{clearCellCoord,2 - clearCellCoord};
-                }
-            }
-        }
-
         return null;
     }
 
@@ -393,5 +392,7 @@ public class Bot {
     {
         this.isOn = state;
     }
+
+    public int getDifficulty() { return difficulty; }
 
 }
