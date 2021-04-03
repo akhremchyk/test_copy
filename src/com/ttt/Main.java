@@ -31,7 +31,7 @@ public class Main {
         else if (args.length > 0)
         {
             System.out.println("\nUnknown argument \"" + args[0] + "\"");
-            System.out.println("Use \"-c\" to activate console interface");
+            System.out.println("Use \"-c\" to activate console interface\n");
         }
         else {
             gui = new Gui();

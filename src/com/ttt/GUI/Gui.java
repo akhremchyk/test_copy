@@ -91,7 +91,7 @@ public class Gui extends JFrame implements ActionListener {
         startButton = new JButton("Play!");
         buttonsPanel.add(startButton);
         startButton.setBackground(Color.WHITE);
-        startButton.setPreferredSize(new Dimension(100,30));
+        startButton.setPreferredSize(new Dimension(110,30));
         startButton.setFocusable(false);
         startButton.addActionListener(this);
 

@@ -8,7 +8,7 @@ public class Bot {
     private Character symbol = Field.getSecondSymbol();
     private boolean isOn = true; // indicates whether the bot is turned on or not
     private final Field field = Main.getField();
-    private int difficulty = 4;
+    private int difficulty = 3;
 
     public Integer[] turn()
     {
