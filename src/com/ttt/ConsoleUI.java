@@ -12,13 +12,20 @@ public class ConsoleUI
 
     private static int scanInt() throws Exception
     {
-        if (scan.hasNextInt()) {
-            return scan.nextInt();
-        } else {
-            scan.nextLine();
-//                    to clear the input stream, ignore the rest of the symbols
-//                     in the line with a mistake and show only one error message
+        // Scanning the whole line
+        String line = scan.nextLine();
+
+         if (line.length() == 0)
+        {
+            throw new Exception("");
+        }
+         // Checking it's first symbol, it should be a digit
+        else if (line.charAt(0) < '0' || line.charAt(0) > '9' || line.length() > 1) {
             throw new Exception("Enter a valid number");
+        }
+        else {
+            // ASCII to int (digit's code - 48 == digit itself)
+            return line.charAt(0) - 48;
         }
     }
 
@@ -63,8 +70,6 @@ public class ConsoleUI
             catch (Exception err)
             {
                 System.out.println(err.getMessage());
-//                     FIXME if (scan.hasNext())
-//                      scan.next();
             }
         }
         return true;
@@ -73,6 +78,8 @@ public class ConsoleUI
     private static void game()
     {
 
+        // If it was set to give bot random symbol every new game
+        // The symbol is being chosen randomly every new game (thanks cap obvious)
         if (Main.isBotsSymbolRandom())
         {
             Random rand = new Random();
@@ -103,8 +110,6 @@ public class ConsoleUI
                     throw new Exception("Enter a valid number");
             } catch (Exception err) {
                 System.out.println(err.getMessage());
-//                     FIXME if (scan.hasNext())
-//                      scan.next();
             }
         }
 
@@ -123,10 +128,13 @@ public class ConsoleUI
             field.changePlayer();
             winner = field.checkWinner();
 
+            // The game ends if there is a winner or there are no free cells
+            // If bot's difficulty is "Cheater" it doesn't accept draw and places it's symbol anyway
             if (winner != '0' && ((bot.getDifficulty() != 4) || (!bot.isOn())))
             {
                 break;
             }
+            // And if the bot wins, the game can end
             else if (winner == bot.getSymbol() && bot.getDifficulty() == 4 && bot.isOn())
             {
                 break;
@@ -165,8 +173,6 @@ public class ConsoleUI
                 }
             } catch (Exception err) {
                 System.out.println(err.getMessage());
-//                     FIXME if (scan.hasNext())
-//                      scan.next();
             }
         }
 
@@ -188,8 +194,6 @@ public class ConsoleUI
                 return;
             } catch (Exception err) {
                 System.out.println(err.getMessage());
-                //                     FIXME if (scan.hasNext())
-                //                      scan.next();
             }
         }
     }
@@ -219,8 +223,6 @@ public class ConsoleUI
 
             } catch (Exception err) {
                 System.out.println(err.getMessage());
-                //                     FIXME if (scan.hasNext())
-                //                      scan.next();
             }
         }
     }
@@ -240,11 +242,6 @@ public class ConsoleUI
             System.out.println("Player " + winner + " won!\n");
         }
 
-        // In the end of the game something is left in input stream
-        // So it should be cleaned at first and then it can wait for user's input
-        // Or pause() just doesn't work
-        // *Костыль*
-        scan.nextLine();
         pause();
 
     }
@@ -265,31 +262,31 @@ public class ConsoleUI
             }
             catch (Exception err) {
                 if (!bot.isOn() || field.getCurrentPlayer() != bot.getSymbol())
-//                in order not to show errors during the bot's turn
+                // In order to not to show errors during the bot's turn
                 {
                     System.out.println(err.getMessage());
-//                   FIXME if (scan.hasNext())
-//                    scan.next();
                 }
             }
         }
     }
 
     private static int playerTurn(){
-        int playerCell;
-        if (scan.hasNextInt())
+        String line = scan.nextLine();
+        if (line.length() == 0)
         {
-            playerCell = scan.nextInt();
-            return  playerCell;
-        } else
-        {
-            scan.nextLine();
             return 0;
+        }
+        else if (line.charAt(0) < '0' || line.charAt(0) > '9' || line.length() > 1) {
+            return 0;
+        } else {
+            return line.charAt(0) - 48;
         }
     }
 
     public static void clearScreen()
     {
+        // Executes console command to clear console's screen
+        // If the program runs in Windows it uses "cls"
         final String os = System.getProperty("os.name");
         if (os.contains("Windows")) {
             try {
@@ -298,9 +295,13 @@ public class ConsoleUI
                 e.printStackTrace();
             }
         }
+        // Else it types this ansi escape sequences
+        // \033[H moves the cursor to the top left corner of the screen
+        // And \033[J clears the part of the screen from the cursor to the end of the screen
+        // Just in case flush() flushes this output stream and forces any buffered output bytes to be written out
         else
         {
-            System.out.print("\033[H\033[2J");
+            System.out.print("\033[H\033[J");
             System.out.flush();
         }
     }
